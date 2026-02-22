@@ -3,21 +3,120 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- TODO: Set the document title to the name of your application -->
-    <title>Lumina Admin Suite</title>
-    <meta name="description" content="E-commerce admin panel and storefront" />
+    
+    <!-- Primary Meta Tags -->
+    <title>Lumina Admin Suite | Premium E-commerce Management</title>
+    <meta name="title" content="Lumina Admin Suite | Premium E-commerce Management" />
+    <meta name="description" content="Elevate your business with Lumina Admin Suite. A state-of-the-art admin panel and storefront designed for excellence." />
     <meta name="author" content="Lumina Admin Suite" />
 
-    <!-- TODO: Update og:title to match your application name -->
-    <meta property="og:title" content="Lumina Admin Suite" />
-    <meta property="og:description" content="E-commerce admin panel and storefront" />
+    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://lumina-admin-suite.netlify.app/" />
+    <meta property="og:title" content="Lumina Admin Suite | Premium E-commerce Management" />
+    <meta property="og:description" content="Elevate your business with Lumina Admin Suite. A state-of-the-art admin panel and storefront designed for excellence." />
+    <meta property="og:image" content="/og-image.png" />
 
-    <meta name="twitter:card" content="summary_large_image" />
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://lumina-admin-suite.netlify.app/" />
+    <meta property="twitter:title" content="Lumina Admin Suite | Premium E-commerce Management" />
+    <meta property="twitter:description" content="Elevate your business with Lumina Admin Suite. A state-of-the-art admin panel and storefront designed for excellence." />
+    <meta property="twitter:image" content="/og-image.png" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+      :root {
+        --background: #020617;
+        --primary: #3b82f6;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: var(--background);
+        font-family: 'Inter', sans-serif;
+        overflow: hidden;
+      }
+      #splash-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
+      }
+      .loader {
+        position: relative;
+        width: 80px;
+        height: 80px;
+      }
+      .loader div {
+        box-sizing: border-box;
+        display: block;
+        position: absolute;
+        width: 64px;
+        height: 64px;
+        margin: 8px;
+        border: 4px solid #fff;
+        border-radius: 50%;
+        animation: loader 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        border-color: #3b82f6 transparent transparent transparent;
+      }
+      .loader div:nth-child(1) { animation-delay: -0.45s; }
+      .loader div:nth-child(2) { animation-delay: -0.3s; }
+      .loader div:nth-child(3) { animation-delay: -0.15s; }
+      @keyframes loader {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .loading-text {
+        margin-top: 24px;
+        color: #94a3b8;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        animation: pulse 2s infinite ease-in-out;
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 1; }
+      }
+    </style>
   </head>
 
   <body>
+    <div id="splash-screen">
+      <div class="loader"><div></div><div></div><div></div><div></div></div>
+      <div class="loading-text">Lumina Suite</div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      window.addEventListener('load', () => {
+        const splash = document.getElementById('splash-screen');
+        if (splash) {
+          setTimeout(() => {
+            splash.style.opacity = '0';
+            setTimeout(() => {
+              splash.remove();
+              document.body.style.overflow = 'auto';
+            }, 500);
+          }, 800);
+        }
+      });
+    </script>
   </body>
 </html>
+
