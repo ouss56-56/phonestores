@@ -6,6 +6,8 @@ import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useI18n } from "@/lib/i18n";
 import { storeApi, StoreProduct } from "@/services/storeApi";
+import { useAuth } from "@/hooks/useAuth";
+import MagneticButton from "@/components/ui/MagneticButton";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -22,6 +24,7 @@ export default function Navbar() {
   const { totalItems, setIsOpen } = useCart();
   const { count: wishlistCount } = useWishlist();
   const { t, locale, setLocale } = useI18n();
+  const { isAdmin: isSystemAdmin } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -82,8 +85,8 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
             className={`flex items-center justify-between h-14 lg:h-16 px-6 rounded-full transition-all duration-500 ${scrolled
-                ? "bg-white/80 backdrop-blur-xl shadow-[0_2px_20px_rgba(0,0,0,0.06)] border border-black/[0.04]"
-                : "bg-transparent"
+              ? "bg-white/80 backdrop-blur-xl shadow-[0_2px_20px_rgba(0,0,0,0.06)] border border-black/[0.04]"
+              : "bg-transparent"
               }`}
           >
             {/* Logo */}

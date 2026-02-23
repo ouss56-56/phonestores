@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Navbar from "@/components/store/Navbar";
+import ThreadLine from "@/components/store/ThreadLine";
 import HeroSection from "@/components/store/HeroSection";
 import CategoryShowcase from "@/components/store/CategoryShowcase";
 import FeaturedCollection from "@/components/store/FeaturedCollection";
@@ -24,7 +25,8 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-hidden">
+      <ThreadLine />
       <Navbar />
       <HeroSection />
 

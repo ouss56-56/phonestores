@@ -6,6 +6,7 @@ import { storeApi, StoreProduct } from "@/services/storeApi";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useI18n } from "@/lib/i18n";
+import MagneticButton from "@/components/ui/MagneticButton";
 
 interface FeaturedCollectionProps {
     onQuickView?: (product: StoreProduct) => void;
@@ -48,7 +49,7 @@ export default function FeaturedCollection({ onQuickView }: FeaturedCollectionPr
                     transition={{ duration: 0.6, ease: [0.22, 0.9, 0.3, 1] }}
                     className="text-center mb-16"
                 >
-                    <h2 className="text-[clamp(1.75rem,4vw,2.75rem)] font-light tracking-tight text-[#111] mb-3">
+                    <h2 className="text-[clamp(1.75rem,4vw,2.75rem)] font-light tracking-tight text-[#111] mb-3 animate-spiral-in">
                         {t('featured.title')}
                     </h2>
                     <p className="text-[#111]/35 text-base font-light">
@@ -83,7 +84,7 @@ export default function FeaturedCollection({ onQuickView }: FeaturedCollectionPr
                                     className="group relative bg-white rounded-2xl border border-black/[0.03] overflow-hidden product-card"
                                 >
                                     {/* Image */}
-                                    <div className="relative aspect-square overflow-hidden bg-[#F8F8F8]">
+                                    <div className="relative aspect-square overflow-hidden bg-[#F8F8F8] ambient-sheen">
                                         {product.image_url ? (
                                             <img
                                                 src={product.image_url}
@@ -117,34 +118,42 @@ export default function FeaturedCollection({ onQuickView }: FeaturedCollectionPr
                                         {/* Quick Actions Overlay */}
                                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/[0.03] transition-colors duration-300" />
                                         <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                                            <button
-                                                onClick={() => toggle(product.id)}
-                                                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 ${has(product.id)
+                                            <MagneticButton distance={0.2}>
+                                                <button
+                                                    onClick={() => toggle(product.id)}
+                                                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 ${has(product.id)
                                                         ? "bg-[#111] text-white"
                                                         : "bg-white/90 backdrop-blur-sm text-[#111]/60 hover:text-[#111]"
-                                                    }`}
-                                                aria-label="Toggle wishlist"
-                                            >
-                                                <Heart style={{ width: 15, height: 15 }} fill={has(product.id) ? "currentColor" : "none"} />
-                                            </button>
-                                            <button
-                                                onClick={() => onQuickView?.(product)}
-                                                className="w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#111]/60 hover:text-[#111] transition-colors"
-                                                aria-label={t('featured.quickView')}
-                                            >
-                                                <Eye style={{ width: 15, height: 15 }} />
-                                            </button>
+                                                        }`}
+                                                    aria-label="Toggle wishlist"
+                                                >
+                                                    <Heart style={{ width: 15, height: 15 }} fill={has(product.id) ? "currentColor" : "none"} />
+                                                </button>
+                                            </MagneticButton>
+                                            <MagneticButton distance={0.2}>
+                                                <button
+                                                    onClick={() => onQuickView?.(product)}
+                                                    className="w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-[#111]/60 hover:text-[#111] transition-colors"
+                                                    aria-label={t('featured.quickView')}
+                                                >
+                                                    <Eye style={{ width: 15, height: 15 }} />
+                                                </button>
+                                            </MagneticButton>
                                         </div>
 
                                         {/* Floating Add Button */}
                                         {!isOutOfStock && (
-                                            <button
-                                                onClick={() => handleAddToCart(product)}
-                                                className="absolute bottom-3 right-3 w-10 h-10 rounded-full bg-[#111] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 hover:bg-[#333] shadow-lg"
-                                                aria-label={t('featured.addToCart')}
-                                            >
-                                                <Plus style={{ width: 18, height: 18 }} />
-                                            </button>
+                                            <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                                                <MagneticButton distance={0.3}>
+                                                    <button
+                                                        onClick={() => handleAddToCart(product)}
+                                                        className="w-10 h-10 rounded-full bg-[#111] text-white flex items-center justify-center hover:bg-[#333] shadow-lg"
+                                                        aria-label={t('featured.addToCart')}
+                                                    >
+                                                        <Plus style={{ width: 18, height: 18 }} />
+                                                    </button>
+                                                </MagneticButton>
+                                            </div>
                                         )}
                                     </div>
 
@@ -157,9 +166,12 @@ export default function FeaturedCollection({ onQuickView }: FeaturedCollectionPr
                                             {product.name}
                                         </h3>
                                         <div className="flex items-center justify-between">
-                                            <span className="text-base font-semibold text-[#111]">
-                                                {formatPrice(product.selling_price)}
-                                            </span>
+                                            <div className="price-reveal-container">
+                                                <span className="text-base font-semibold text-[#111] price-reveal-text">
+                                                    {formatPrice(product.selling_price)}
+                                                </span>
+                                                <div className="price-reveal-line" />
+                                            </div>
                                             {product.color && (
                                                 <span className="text-[11px] text-[#111]/25">{product.color}</span>
                                             )}
