@@ -12,7 +12,10 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import jsPDF from "jspdf";
-import type { Product, Sale, Repair } from "@/lib/admin-types";
+import type { Product, Sale, Repair, RotationType, ProductType } from "@/lib/admin-types";
+import { inventoryService } from "@/services/inventoryService";
+import { accessoryService } from "@/services/accessoryService";
+import { toast } from "sonner";
 
 const salesData = [
   { month: "Jan", revenue: 4200000, orders: 38 },
@@ -33,6 +36,8 @@ const initialProducts: Product[] = [
 
 const tabs = [
   "Tableau de bord",
+  "Analyse Accessoires",
+  "Matrice des Modèles",
   "Point de Vente (POS)",
   "Produits",
   "Inventaire",
@@ -118,6 +123,8 @@ export default function Admin() {
                 }`}
             >
               {tab === "Tableau de bord" && <TrendingUp className="w-4 h-4" />}
+              {tab === "Analyse Accessoires" && <Zap className="w-4 h-4" />}
+              {tab === "Matrice des Modèles" && <Database className="w-4 h-4" />}
               {tab === "Point de Vente (POS)" && <Calculator className="w-4 h-4" />}
               {tab === "Produits" && <Package className="w-4 h-4" />}
               {tab === "Inventaire" && <Database className="w-4 h-4" />}
@@ -173,86 +180,91 @@ export default function Admin() {
           {/* OVERVIEW / Tableau de bord */}
           {activeTab === "Tableau de bord" && (
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
                 {[
-                  { title: "Chiffre d'Affaires", value: "65 420 000 DA", change: "+18.2%", up: true, icon: DollarSign, accent: "#FB923C" },
-                  { title: "Ventes POS", value: "12 840 000 DA", change: "+42.5%", up: true, icon: Calculator, accent: "#7B68EE" },
-                  { title: "Commandes", value: "573", change: "+12.5%", up: true, icon: ShoppingBag, accent: "#00FF88" },
-                  { title: "Note Client", value: "4.9/5", change: "+0.2", up: true, icon: Star, accent: "#FFB800" },
-                ].map(({ title, value, change, up, icon: Icon, accent }, i) => (
+                  { title: "Valeur Achat Stock", value: "42 500 000 DA", icon: Database, accent: "#94A3B8" },
+                  { title: "Valeur Vente Stock", value: "50 790 000 DA", icon: DollarSign, accent: "#CBD5E1" },
+                  { title: "Profit Théorique", value: "8 290 000 DA", icon: TrendingUp, accent: "#FFFFFF" },
+                  { title: "Total Produits", value: "842", icon: Package, accent: "#64748B" },
+                  { title: "Stock Critique", value: "12", icon: Zap, accent: "#E2E8F0" },
+                ].map(({ title, value, icon: Icon, accent }, i) => (
                   <motion.div
                     key={title}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.1 }}
-                    className="glass-card rounded-3xl p-6 border-white/5 relative overflow-hidden group hover:border-white/10 transition-all duration-500"
+                    className="glass-card rounded-3xl p-5 border-white/5 relative overflow-hidden group hover:border-white/10 transition-all duration-500"
                   >
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-125 group-hover:opacity-20 transition-all duration-700">
-                      <Icon className="w-16 h-16" style={{ color: accent }} />
-                    </div>
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-white/5" style={{ background: `${accent}15` }}>
-                        <Icon className="w-5 h-5" style={{ color: accent }} />
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-white/5 bg-white/5">
+                        <Icon className="w-4 h-4 text-muted-foreground" />
                       </div>
-                      <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold font-mono-tech">{title}</span>
+                      <span className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold">{title}</span>
                     </div>
-                    <div className="text-2xl font-mono-tech font-bold text-white mb-2 tracking-tight">{value}</div>
-                    <div className={`flex items-center gap-1.5 text-[10px] font-bold ${up ? "text-emerald-500" : "text-cyber-red"}`}>
-                      <div className={`p-0.5 rounded ${up ? "bg-emerald-500/10" : "bg-cyber-red/10"}`}>
-                        {up ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                      </div>
-                      {change} <span className="text-muted-foreground ml-1 font-normal font-sans italic opacity-60">vs mois dernier</span>
+                    <div className="text-xl font-mono-tech font-bold text-white tracking-tight">
+                      <motion.span
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 1 }}
+                      >
+                        {value}
+                      </motion.span>
                     </div>
                   </motion.div>
                 ))}
               </div>
 
+              {/* Smart Insight Bar */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white/[0.02] border border-white/5 p-4 rounded-2xl flex items-center justify-between gap-6 overflow-hidden relative"
+              >
+                <div className="flex items-center gap-2 text-primary whitespace-nowrap">
+                  <Zap className="w-4 h-4" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest">Smart Insights</span>
+                </div>
+                <div className="flex-1 flex gap-8 items-center overflow-x-auto no-scrollbar">
+                  {[
+                    "15 produits n'ont pas bougé depuis 45 jours",
+                    "30% du capital est immobilisé dans les smartphones",
+                    "Les protège-écrans sont en surstock",
+                    "Marges accessoires en hausse de 5%"
+                  ].map((insight, i) => (
+                    <div key={i} className="flex items-center gap-2 whitespace-nowrap">
+                      <div className="w-1 h-1 rounded-full bg-white/20" />
+                      <span className="text-[11px] text-muted-foreground">{insight}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#0A0A0F] to-transparent pointer-events-none" />
+              </motion.div>
+
               <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 glass-card rounded-[2rem] p-8 border-white/5 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 p-8 opacity-5">
-                    <TrendingUp className="w-32 h-32 text-primary" />
-                  </div>
                   <div className="flex items-center justify-between mb-10">
                     <div>
-                      <h3 className="text-xl font-heading font-bold text-white italic tracking-wide uppercase tracking-widest">Performance Volume</h3>
-                      <p className="text-xs text-muted-foreground font-mono-tech mt-1">Données agrégées mensuelles</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button className="bg-white/5 border border-white/10 rounded-lg text-[10px] font-bold px-3 py-1.5 text-white uppercase hover:bg-white/10 transition-all">Export</button>
-                      <button className="bg-primary/10 border border-primary/20 rounded-lg text-[10px] font-bold px-3 py-1.5 text-primary uppercase">Mise à jour</button>
+                      <h3 className="text-xl font-heading font-bold text-white italic tracking-wide uppercase tracking-widest">Répartition du Capital</h3>
+                      <p className="text-xs text-muted-foreground font-mono-tech mt-1">Par catégorie de produit (Monochrome View)</p>
                     </div>
                   </div>
                   <div className="h-[320px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={salesData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#FB923C" stopOpacity={0.4} />
-                            <stop offset="95%" stopColor="#FB923C" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
+                      <BarChart data={[
+                        { name: 'Phones', value: 15400000 },
+                        { name: 'Accessoires', value: 8900000 },
+                        { name: 'Pièces', value: 4200000 },
+                        { name: 'Réparations', value: 2100000 },
+                      ]}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
-                        <XAxis
-                          dataKey="month"
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }}
-                          dy={10}
-                        />
-                        <YAxis
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }}
-                          tickFormatter={(v) => `${(v / 1000000).toFixed(1)}M`}
-                        />
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }} />
+                        <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10, fontWeight: 700 }} tickFormatter={(v) => `${(v / 1000000).toFixed(1)}M`} />
                         <Tooltip
-                          cursor={{ stroke: '#FB923C', strokeWidth: 1 }}
-                          contentStyle={{ background: '#0F0F1A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.5)' }}
-                          itemStyle={{ color: '#FB923C', fontWeight: 800, fontSize: '12px' }}
-                          labelStyle={{ color: '#94a3b8', fontSize: '10px', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}
+                          cursor={{ fill: 'rgba(255,255,255,0.02)' }}
+                          contentStyle={{ background: '#0F0F1A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px' }}
                         />
-                        <Area type="monotone" dataKey="revenue" stroke="#FB923C" strokeWidth={4} fillOpacity={1} fill="url(#colorRev)" animationDuration={2000} />
-                      </AreaChart>
+                        <Bar dataKey="value" fill="#94A3B8" radius={[8, 8, 0, 0]} />
+                      </BarChart>
                     </ResponsiveContainer>
                   </div>
                 </div>
@@ -281,6 +293,116 @@ export default function Admin() {
                     ))}
                   </div>
                 </div>
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === "Analyse Accessoires" && (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {[
+                  { title: "Capital Accessoires", value: "8 940 000 DA", icon: Database },
+                  { title: "Marge Moyenne", value: "42%", icon: TrendingUp },
+                  { title: "Rotation Rapide", value: "156 items", icon: Zap },
+                  { title: "Accessoire Phare", value: "Case iPhone 15", icon: Star },
+                ].map(({ title, value, icon: Icon }, i) => (
+                  <div key={i} className="glass-card p-6 rounded-3xl border-white/5">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Icon className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">{title}</span>
+                    </div>
+                    <div className="text-xl font-mono-tech font-bold text-white">{value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid lg:grid-cols-3 gap-8">
+                <div className="lg:col-span-2 glass-card rounded-[2rem] p-8 border-white/5">
+                  <h3 className="text-xl font-heading font-bold text-white italic uppercase tracking-widest mb-10">Heatmap des Marges</h3>
+                  <div className="grid grid-cols-4 gap-4">
+                    {['Protection', 'Charge', 'Audio', 'Style'].map((cat) => (
+                      <div key={cat} className="space-y-4">
+                        <div className="text-[10px] text-muted-foreground uppercase font-bold text-center">{cat}</div>
+                        {[45, 38, 52, 28].map((margin, j) => (
+                          <div
+                            key={j}
+                            style={{ opacity: margin / 60 }}
+                            className="h-12 bg-white/10 rounded-xl flex items-center justify-center text-[10px] font-bold text-white group cursor-help transition-all hover:bg-white/20"
+                          >
+                            {margin}%
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="glass-card rounded-[2rem] p-8 border-white/5">
+                  <h3 className="text-xl font-heading font-bold text-white italic uppercase tracking-widest mb-10">Rotation de Stock</h3>
+                  <div className="space-y-6">
+                    {[
+                      { name: 'Câble Type-C Branded', rotation: 'high', stock: 42 },
+                      { name: 'Coque Magsafe Clear', rotation: 'high', stock: 15 },
+                      { name: 'Écouteurs Wired', rotation: 'slow', stock: 89 },
+                      { name: 'Powerbank 10k', rotation: 'medium', stock: 24 },
+                    ].map((item, i) => (
+                      <div key={i} className="flex justify-between items-center group">
+                        <div>
+                          <div className="text-sm font-bold text-white group-hover:text-primary transition-colors">{item.name}</div>
+                          <div className="text-[10px] text-muted-foreground">Stock: {item.stock} units</div>
+                        </div>
+                        <div className={`px-2 py-1 rounded-lg text-[8px] font-bold uppercase tracking-widest ${item.rotation === 'high' ? 'bg-white/20 text-white' :
+                          item.rotation === 'medium' ? 'bg-white/10 text-muted-foreground' :
+                            'bg-white/5 text-muted-foreground/50'
+                          }`}>
+                          {item.rotation}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === "Matrice des Modèles" && (
+            <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="space-y-8">
+              <div className="flex justify-between items-center">
+                <h3 className="text-2xl font-heading font-bold text-white uppercase tracking-widest italic">Variant Matrix</h3>
+                <div className="flex gap-2">
+                  {['iPhone 15 Pro', 'iPhone 15 Pro Max', 'Galaxy S24'].map(model => (
+                    <button key={model} className="px-4 py-2 rounded-xl bg-white/5 border border-white/5 text-[10px] font-bold text-muted-foreground uppercase hover:text-white transition-all">{model}</button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="glass-card rounded-[2.5rem] p-8 border-white/5 overflow-hidden">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr>
+                      <th className="p-4 border border-white/5"></th>
+                      {['128GB', '256GB', '512GB', '1TB'].map(storage => (
+                        <th key={storage} className="p-4 border border-white/5 text-[10px] text-muted-foreground uppercase font-bold tracking-widest">{storage}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {['Natural Titanium', 'Blue Titanium', 'White Titanium', 'Black Titanium'].map(color => (
+                      <tr key={color}>
+                        <td className="p-4 border border-white/5 text-[10px] text-white uppercase font-bold tracking-widest">{color}</td>
+                        {[2, 5, 0, 1].map((q, j) => (
+                          <td
+                            key={j}
+                            onClick={() => q > 0 && toast.info(`IMEIs for ${color} - 256GB`)}
+                            className={`p-4 border border-white/5 text-center cursor-pointer transition-all hover:bg-white/5 ${q === 0 ? 'bg-cyber-red/5' : ''}`}
+                          >
+                            <span className={`text-base font-mono-tech ${q === 0 ? 'text-cyber-red/50' : 'text-white'}`}>{q.toString().padStart(2, '0')}</span>
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </motion.div>
           )}
@@ -452,14 +574,15 @@ export default function Admin() {
                     </thead>
                     <tbody className="divide-y divide-white/5">
                       {initialProducts.map((p, i) => {
-                        const marginNet = Math.round(((p.selling_price - p.purchase_price) / p.selling_price) * 100);
+                        const marginNet = Math.round(((p.selling_price - p.purchase_price) / (p.selling_price || 1)) * 100);
+                        const rotation = inventoryService.detectRotation(p);
                         return (
                           <motion.tr
                             key={p.id}
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: i * 0.05 }}
-                            className="hover:bg-white/[0.01] transition-colors group"
+                            className="hover:bg-white/[0.01] transition-colors group cursor-pointer"
                           >
                             <td className="px-8 py-6">
                               <div className="flex items-center gap-4">
@@ -467,8 +590,16 @@ export default function Admin() {
                                   {p.brand[0]}
                                 </div>
                                 <div>
-                                  <div className="text-sm font-bold text-white group-hover:text-primary transition-colors">{p.name}</div>
-                                  <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold mt-0.5">{p.brand}</div>
+                                  <input
+                                    className="bg-transparent text-sm font-bold text-white focus:outline-none focus:border-b border-primary/50 w-full"
+                                    defaultValue={p.name}
+                                    onBlur={(e) => {
+                                      if (e.target.value !== p.name) {
+                                        toast.success(`${p.name} mis à jour`);
+                                      }
+                                    }}
+                                  />
+                                  <div className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold mt-0.5">{p.brand} • {p.type || 'Phone'}</div>
                                 </div>
                               </div>
                             </td>
@@ -477,25 +608,39 @@ export default function Admin() {
                                 <div className="w-1 h-1 rounded-full bg-primary" />
                                 {p.sku}
                               </div>
-                              <div className="text-[10px] text-muted-foreground font-mono-tech pl-3">{p.imei}</div>
+                              <div className="text-[10px] text-muted-foreground font-mono-tech pl-3">
+                                {p.imei || (p.imei_list ? `${p.imei_list.length} IMEIs` : 'No IMEI')}
+                              </div>
                             </td>
                             <td className="px-8 py-6">
-                              <div className="text-sm font-bold text-white font-mono-tech">{p.selling_price.toLocaleString()} DA</div>
-                              <div className="text-[9px] text-muted-foreground font-mono-tech italic">Achat: {p.purchase_price.toLocaleString()} DA</div>
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[9px] text-muted-foreground w-8 uppercase">Sale</span>
+                                  <input
+                                    className="bg-transparent text-xs font-bold text-white font-mono-tech focus:outline-none focus:border-b border-primary/50 w-20"
+                                    defaultValue={p.selling_price.toLocaleString()}
+                                  />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span className="text-[9px] text-muted-foreground w-8 uppercase">Buy</span>
+                                  <span className="text-[10px] text-muted-foreground font-mono-tech">{p.purchase_price.toLocaleString()}</span>
+                                </div>
+                              </div>
                             </td>
                             <td className="px-8 py-6">
                               <div className="flex flex-col items-center gap-2">
-                                <div className={`text-[10px] font-bold ${marginNet > 20 ? 'text-emerald-500' : 'text-primary'}`}>{marginNet}%</div>
+                                <div className={`text-[10px] font-bold ${marginNet > 30 ? 'text-emerald-500' : 'text-primary'}`}>{marginNet}%</div>
                                 <div className="w-16 h-1 bg-white/5 rounded-full overflow-hidden">
-                                  <div className={`h-full ${marginNet > 20 ? 'bg-emerald-500' : 'bg-primary'}`} style={{ width: `${marginNet}%` }} />
+                                  <div className={`h-full ${marginNet > 30 ? 'bg-emerald-500' : 'bg-primary'}`} style={{ width: `${Math.min(100, marginNet)}%` }} />
                                 </div>
                               </div>
                             </td>
                             <td className="px-8 py-6">
                               <div className="flex items-center gap-3">
-                                <div className={`px-3 py-1.5 rounded-xl text-xs font-mono-tech font-bold ${p.quantity <= p.low_stock_threshold ? 'bg-cyber-red/10 text-cyber-red border border-cyber-red/20' : 'bg-white/5 text-white'}`}>
-                                  {p.quantity.toString().padStart(2, '0')}
-                                </div>
+                                <input
+                                  className={`w-12 px-2 py-1.5 rounded-xl text-xs font-mono-tech font-bold bg-white/5 border border-white/5 focus:outline-none focus:border-primary/50 text-center ${p.quantity <= p.low_stock_threshold ? 'text-cyber-red' : 'text-white'}`}
+                                  defaultValue={p.quantity.toString().padStart(2, '0')}
+                                />
                                 {p.quantity <= p.low_stock_threshold && (
                                   <div className="animate-pulse">
                                     <Zap className="w-3.5 h-3.5 text-cyber-red" />
@@ -504,9 +649,17 @@ export default function Admin() {
                               </div>
                             </td>
                             <td className="px-8 py-6">
-                              <div className="flex items-center gap-2.5">
-                                <div className={`w-2 h-2 rounded-full ${p.is_active ? 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)]' : 'bg-white/10'}`} />
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-white">{p.is_active ? 'Visible' : 'Archivé'}</span>
+                              <div className="flex flex-col gap-1.5">
+                                <div className="flex items-center gap-2.5">
+                                  <div className={`w-2 h-2 rounded-full ${p.is_active ? 'bg-emerald-500' : 'bg-white/10'}`} />
+                                  <span className="text-[9px] font-bold uppercase tracking-widest text-white">{p.is_active ? 'Active' : 'Hidden'}</span>
+                                </div>
+                                <div className={`px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-widest w-fit ${rotation === 'high' ? 'bg-white/10 text-white' :
+                                  rotation === 'medium' ? 'bg-white/5 text-muted-foreground' :
+                                    'text-muted-foreground/50'
+                                  }`}>
+                                  {rotation} rotation
+                                </div>
                               </div>
                             </td>
                             <td className="px-8 py-6 text-right">
@@ -524,50 +677,71 @@ export default function Admin() {
             </motion.div>
           )}
 
-          {/* INVENTAIRE (Simplified for now) */}
+          {/* INVENTAIRE */}
           {activeTab === "Inventaire" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 glass-card rounded-[2rem] p-8 border-white/5">
-                  <div className="flex justify-between items-center mb-10">
-                    <h3 className="text-xl font-heading font-bold text-white italic uppercase tracking-widest">Mouvements de Stock</h3>
-                    <button className="bg-primary/10 text-primary px-4 py-2 rounded-xl text-[10px] font-bold uppercase">Nouveau Transfert</button>
+              <div className="flex justify-between items-center bg-white/[0.02] border border-white/5 p-6 rounded-[2rem]">
+                <div>
+                  <h3 className="text-xl font-heading font-bold text-white italic uppercase tracking-widest">Inventory Snapshots</h3>
+                  <p className="text-xs text-muted-foreground mt-1 lowercase">Compare capital distribution across time</p>
+                </div>
+                <button
+                  onClick={() => {
+                    inventoryService.createSnapshot();
+                    toast.success("Snapshot créé avec succès");
+                  }}
+                  className="bg-primary text-background px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-primary/20"
+                >
+                  Create New Snapshot
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="glass-card rounded-[2rem] p-8 border-white/5">
+                  <div className="flex justify-between items-center mb-8">
+                    <h3 className="text-lg font-bold text-white uppercase tracking-tighter">Comparison View</h3>
+                    <div className="flex gap-2">
+                      <select className="bg-white/5 border border-white/10 text-[10px] text-white px-2 py-1 rounded-lg outline-none">
+                        <option>Current (Now)</option>
+                      </select>
+                      <span className="text-muted-foreground self-center">vs</span>
+                      <select className="bg-white/5 border border-white/10 text-[10px] text-white px-2 py-1 rounded-lg outline-none">
+                        <option>Snapshot #prev-482</option>
+                      </select>
+                    </div>
                   </div>
-                  <div className="space-y-4">
+                  <div className="space-y-6">
                     {[
-                      { type: "entrée", product: "iPhone 15 Pro Max", qty: "+10", date: "Aujourd'hui, 09:41", user: "Karim" },
-                      { type: "sortie", product: "Galaxy S24 Ultra", qty: "-01", date: "Hier, 17:20", user: "POS Terminal" },
-                    ].map((m, i) => (
-                      <div key={i} className="flex justify-between items-center bg-white/5 p-5 rounded-3xl border border-white/5">
-                        <div className="flex items-center gap-4">
-                          <div className={`p-3 rounded-2xl ${m.type === 'entrée' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-cyber-red/10 text-cyber-red'}`}>
-                            {m.type === 'entrée' ? <ArrowDownRight className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
+                      { cat: 'Phones', current: 15400000, prev: 14200000 },
+                      { cat: 'Accessories', current: 8900000, prev: 9500000 },
+                      { cat: 'Spare Parts', current: 4200000, prev: 4100000 },
+                    ].map((item, i) => {
+                      const diff = item.current - item.prev;
+                      const percent = ((diff / item.prev) * 100).toFixed(1);
+                      return (
+                        <div key={i} className="space-y-2">
+                          <div className="flex justify-between text-[11px] font-bold">
+                            <span className="text-white uppercase">{item.cat}</span>
+                            <span className={diff >= 0 ? 'text-emerald-500' : 'text-cyber-red'}>
+                              {diff >= 0 ? '+' : ''}{percent}%
+                            </span>
                           </div>
-                          <div>
-                            <div className="text-sm font-bold text-white">{m.product}</div>
-                            <div className="text-[10px] text-muted-foreground">{m.date} • Opérateur: {m.user}</div>
+                          <div className="h-1 bg-white/5 rounded-full overflow-hidden flex">
+                            <div className="h-full bg-white/20" style={{ width: `${(item.prev / item.current) * 100}%` }} />
+                            <div className={`h-full ${diff >= 0 ? 'bg-emerald-500' : 'bg-cyber-red'}`} style={{ width: '10%' }} />
                           </div>
                         </div>
-                        <div className={`text-sm font-mono-tech font-bold ${m.type === 'entrée' ? 'text-emerald-500' : 'text-cyber-red'}`}>{m.qty}</div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
-                <div className="glass-card rounded-[2rem] p-8 border-white/5">
-                  <h3 className="text-xl font-heading font-bold text-white italic uppercase tracking-widest mb-10">Valeur Stock</h3>
-                  <div className="space-y-8">
-                    <div>
-                      <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest mb-2">Valeur d'Achat</div>
-                      <div className="text-3xl font-mono-tech font-bold text-white">42 500 000 DA</div>
-                    </div>
-                    <div>
-                      <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest mb-2">Profit Potentiel</div>
-                      <div className="text-3xl font-mono-tech font-bold text-emerald-500">+8 290 000 DA</div>
-                    </div>
-                    <div className="pt-8 border-t border-white/5">
-                      <button className="w-full bg-white/5 border border-white/10 py-4 rounded-2xl text-[10px] font-bold text-white uppercase tracking-widest hover:bg-white/10 transition-all">Inventaire Physique Manuel</button>
-                    </div>
-                  </div>
+
+                <div className="glass-card rounded-[2rem] p-8 border-white/5 flex flex-col justify-center items-center text-center">
+                  <Calculator className="w-12 h-12 text-muted-foreground/20 mb-6" />
+                  <h4 className="text-white font-bold uppercase tracking-widest text-sm mb-2">Strategic Insight</h4>
+                  <p className="text-xs text-muted-foreground max-w-[300px] leading-relaxed">
+                    Capital in accessories has decreased by 6% since the last snapshot, while phone inventory value rose. Consider rebalancing cable stock.
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -614,6 +788,46 @@ export default function Admin() {
           )}
         </div>
       </main>
+
+      {/* Command Palette (Mock UI) */}
+      <div className="fixed inset-0 z-[100] bg-[#0A0A0F]/90 backdrop-blur-xl flex items-center justify-center p-4 opacity-0 pointer-events-none group-data-[active=true]:opacity-100 group-data-[active=true]:pointer-events-auto transition-all duration-300">
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          whileInView={{ scale: 1, opacity: 1 }}
+          className="w-full max-w-2xl bg-[#0F0F1A] border border-white/10 rounded-[2.5rem] shadow-2xl overflow-hidden"
+        >
+          <div className="p-6 border-b border-white/5 flex items-center gap-4">
+            <Search className="w-5 h-5 text-muted-foreground" />
+            <input
+              autoFocus
+              placeholder="Search actions or products (Type 'add' to create, 'inv' for inventory)..."
+              className="bg-transparent text-lg text-white outline-none w-full font-mono-tech"
+            />
+            <div className="px-2 py-1 rounded bg-white/5 text-[10px] text-muted-foreground font-bold">ESC</div>
+          </div>
+          <div className="p-4 space-y-2">
+            {[
+              { icon: Plus, label: "Add New Product", key: "P" },
+              { icon: FileText, label: "Generate Report", key: "R" },
+              { icon: Database, label: "View Snapshots", key: "S" },
+              { icon: Calculator, label: "Open POS", key: "O" },
+            ].map((action, i) => (
+              <div key={i} className="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 cursor-pointer group/action transition-all">
+                <div className="flex items-center gap-4">
+                  <div className="p-2 rounded-xl bg-white/5 group-hover/action:bg-primary/20 transition-colors">
+                    <action.icon className="w-4 h-4 text-muted-foreground group-hover/action:text-primary" />
+                  </div>
+                  <span className="text-sm font-bold text-white uppercase tracking-widest">{action.label}</span>
+                </div>
+                <div className="flex gap-1">
+                  <span className="px-2 py-1 rounded bg-white/5 text-[9px] text-muted-foreground font-bold border border-white/5">CTRL</span>
+                  <span className="px-2 py-1 rounded bg-white/5 text-[9px] text-muted-foreground font-bold border border-white/5">{action.key}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }

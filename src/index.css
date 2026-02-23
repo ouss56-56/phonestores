@@ -6,76 +6,75 @@
 
 @layer base {
   :root {
-    --background: 220 15% 5%;
-    --foreground: 40 10% 95%;
+    --background: 220 15% 3%;
+    --foreground: 40 10% 98%;
 
-    --card: 220 12% 8%;
-    --card-foreground: 40 10% 95%;
+    --card: 220 12% 6%;
+    --card-foreground: 40 10% 98%;
 
-    --popover: 220 12% 8%;
-    --popover-foreground: 40 10% 95%;
+    --popover: 220 12% 6%;
+    --popover-foreground: 40 10% 98%;
 
-    --primary: 15 85% 55%;
-    --primary-foreground: 40 10% 95%;
+    --primary: 38 75% 55%; /* Lumina Gold */
+    --primary-foreground: 220 15% 5%;
 
-    --secondary: 35 90% 50%;
-    --secondary-foreground: 220 15% 5%;
+    --secondary: 15 85% 55%; /* Copper/Titanium */
+    --secondary-foreground: 40 10% 98%;
 
-    --muted: 220 10% 12%;
-    --muted-foreground: 220 10% 50%;
+    --muted: 220 10% 10%;
+    --muted-foreground: 220 10% 60%;
 
-    --accent: 15 85% 55%;
-    --accent-foreground: 40 10% 95%;
+    --accent: 38 75% 55%;
+    --accent-foreground: 220 15% 5%;
 
-    --destructive: 0 72% 55%;
-    --destructive-foreground: 40 10% 95%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 40 10% 98%;
 
-    --success: 152 60% 48%;
-    --warning: 40 90% 55%;
+    --success: 142 70% 45%;
+    --warning: 38 92% 50%;
 
-    --border: 220 8% 16%;
-    --input: 220 12% 10%;
-    --ring: 15 85% 55%;
+    --border: 220 8% 12%;
+    --input: 220 12% 8%;
+    --ring: 38 75% 55%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    --glass-bg: rgba(18, 18, 24, 0.65);
-    --glass-border: rgba(255, 180, 120, 0.08);
-    --glass-blur: 24px;
+    --glass-bg: rgba(10, 10, 15, 0.75);
+    --glass-border: rgba(255, 215, 0, 0.12); /* Gold border for glass */
+    --glass-blur: 28px;
 
-    --gradient-hero: linear-gradient(160deg, hsl(220 15% 5%) 0%, hsl(225 20% 8%) 40%, hsl(15 30% 8%) 100%);
-    --gradient-accent: linear-gradient(135deg, hsl(15 85% 55%) 0%, hsl(35 90% 55%) 100%);
-    --gradient-card: radial-gradient(ellipse at top, hsl(220 12% 10%) 0%, hsl(220 15% 5%) 100%);
+    --gradient-hero: radial-gradient(circle at top right, hsl(38 40% 15%) 0%, hsl(220 15% 3%) 60%);
+    --gradient-accent: linear-gradient(135deg, hsl(38 75% 55%) 0%, hsl(15 85% 55%) 100%);
+    --gradient-card: linear-gradient(180deg, hsla(220, 12%, 10%, 0.8) 0%, hsla(220, 15%, 5%, 0.9) 100%);
 
-    --shadow-warm: 0 0 30px hsla(15, 85%, 55%, 0.2), 0 0 60px hsla(15, 85%, 55%, 0.1);
-    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.03);
-    --shadow-hover: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 40px hsla(15, 85%, 55%, 0.12);
+    --shadow-gold: 0 0 40px hsla(38, 75%, 55%, 0.15), 0 0 80px hsla(38, 75%, 55%, 0.05);
+    --shadow-premium: 0 10px 40px -10px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.05) inset;
+    
+    --sidebar-background: 220 12% 4%;
+    --sidebar-foreground: 40 10% 95%;
+    --sidebar-primary: 38 75% 55%;
+    --sidebar-primary-foreground: 220 15% 5%;
+    --sidebar-accent: 220 10% 10%;
+    --sidebar-accent-foreground: 40 10% 95%;
+    --sidebar-border: 220 8% 10%;
+    --sidebar-ring: 38 75% 55%;
 
-    --sidebar-background: 220 12% 6%;
-    --sidebar-foreground: 40 10% 90%;
-    --sidebar-primary: 15 85% 55%;
-    --sidebar-primary-foreground: 40 10% 95%;
-    --sidebar-accent: 220 10% 12%;
-    --sidebar-accent-foreground: 40 10% 90%;
-    --sidebar-border: 220 8% 14%;
-    --sidebar-ring: 15 85% 55%;
+    --surface-01: 220 8% 7%;
+    --surface-02: 220 6% 9%;
+    --surface-03: 220 5% 12%;
+    --surface-04: 220 4% 15%;
 
-    --surface-01: 220 8% 9%;
-    --surface-02: 220 6% 11%;
-    --surface-03: 220 5% 14%;
-    --surface-04: 220 4% 18%;
+    --status-green: 142 70% 45%;
+    --status-orange: 38 92% 50%;
+    --status-red: 0 84% 60%;
+    --status-blue: 210 100% 60%;
+    --status-yellow: 48 100% 50%;
 
-    --status-green: 152 60% 48%;
-    --status-orange: 28 80% 55%;
-    --status-red: 0 72% 55%;
-    --status-blue: 210 70% 55%;
-    --status-yellow: 45 85% 55%;
-
-    --chart-1: 15 85% 55%;
-    --chart-2: 35 90% 55%;
-    --chart-3: 152 60% 48%;
-    --chart-4: 28 80% 55%;
-    --chart-5: 0 72% 55%;
+    --chart-1: 38 75% 55%;
+    --chart-2: 15 85% 55%;
+    --chart-3: 142 70% 45%;
+    --chart-4: 210 100% 60%;
+    --chart-5: 48 100% 50%;
   }
 }
 

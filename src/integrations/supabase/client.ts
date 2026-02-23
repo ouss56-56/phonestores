@@ -5,8 +5,15 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-// Import the supabase client like this:
-// import { supabase } from "@/integrations/supabase/client";
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  const errorMsg = "Supabase environment variables (VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY) are missing. " +
+    "If you are running locally, check your .env file. " +
+    "If you have deployed the site, ensure these variables are set in your hosting provider's (e.g., Netlify) environment settings.";
+  console.error(errorMsg);
+  // Throwing a standard error that will be caught by the app's error boundary if it exists,
+  // or shown in the console to help debug the "blank screen" issue.
+  throw new Error(errorMsg);
+}
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {

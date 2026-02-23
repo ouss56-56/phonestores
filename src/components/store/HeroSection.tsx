@@ -54,15 +54,19 @@ export default function HeroSection() {
               </span>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }}>
-              <h1 className="font-display font-bold leading-[0.95] mb-3" style={{ fontSize: "clamp(3.5rem, 8vw, 6.5rem)" }}>
-                <span className="text-foreground">L'Art du</span><br />
-                <span className="gradient-text italic">Mobile Premium</span>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <h1 className="font-display font-bold leading-[0.9] mb-4" style={{ fontSize: "clamp(4rem, 9vw, 7.5rem)" }}>
+                <span className="text-foreground tracking-tighter">L'Élite du</span><br />
+                <span className="gradient-text italic tracking-normal">Digital Luxury</span>
               </h1>
-              <div className="flex items-center gap-4 mt-4">
-                <div className="h-px flex-1 bg-gradient-to-r from-primary/50 to-transparent" />
-                <p className="font-heading font-light text-xl lg:text-2xl text-muted-foreground/80 lowercase tracking-widest">
-                  Future is here
+              <div className="flex items-center gap-6 mt-6">
+                <div className="h-[2px] w-24 bg-gradient-to-r from-primary to-transparent" />
+                <p className="font-heading font-light text-lg lg:text-xl text-muted-foreground/90 uppercase tracking-[0.3em]">
+                  The 2026 Collection
                 </p>
               </div>
             </motion.div>
@@ -71,72 +75,32 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-muted-foreground text-base lg:text-lg max-w-lg leading-relaxed"
+              className="text-muted-foreground/80 text-lg lg:text-xl max-w-xl leading-relaxed font-light"
             >
-              Chez <span className="text-primary font-medium">Le Bon Coin</span>, nous sélectionnons les meilleurs
-              smartphones et accessoires pour ceux qui apprécient la qualité sans compromis.
+              Explorez une sélection <span className="text-primary font-medium">exclusive</span> d'appareils d'exception.
+              Conçus pour ceux qui exigent l'excellence, à chaque interaction.
             </motion.p>
-
-            {/* Countdown Heat Effect */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="glass-card rounded-2xl p-4 border-primary/20 relative group overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-secondary/5 to-primary/5 animate-shimmer" />
-              <div className="relative z-10 flex items-center justify-between">
-                <div>
-                  <div className="text-[10px] text-primary font-bold uppercase tracking-widest mb-1 opacity-70">Offre Limitée</div>
-                  <div className="flex gap-3 text-2xl font-mono-tech font-bold text-white">
-                    <span className="relative">02<span className="text-[10px] absolute -bottom-3 left-0 text-muted-foreground font-light">JOURS</span></span>
-                    <span className="text-primary/50">:</span>
-                    <span className="relative">14<span className="text-[10px] absolute -bottom-3 left-0 text-muted-foreground font-light">HEURES</span></span>
-                    <span className="text-primary/50">:</span>
-                    <span className="relative">58<span className="text-[10px] absolute -bottom-3 left-0 text-muted-foreground font-light">MIN</span></span>
-                  </div>
-                </div>
-                <div className="h-10 w-10 rounded-full border border-primary/30 flex items-center justify-center animate-bounce">
-                  <Zap className="w-5 h-5 text-secondary fill-secondary/20" />
-                </div>
-              </div>
-              {/* Heat blur effect */}
-              <div className="absolute -inset-4 bg-primary/20 blur-2xl opacity-0 group-hover:opacity-40 transition-opacity duration-1000 animate-pulse pointer-events-none" />
-            </motion.div>
 
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.5 }}
-              className="grid grid-cols-3 gap-3"
+              className="flex flex-col sm:flex-row items-end sm:items-center gap-8 mt-6"
             >
-              {stats.map(({ icon: Icon, label, value }) => (
-                <div key={label} className="glass-card rounded-2xl p-4 text-center group hover:border-primary/30 transition-all duration-400 hover:bg-primary/5">
-                  <Icon className="w-4 h-4 text-primary mx-auto mb-2 group-hover:scale-125 transition-transform" />
-                  <div className="font-mono-tech text-sm text-primary font-bold">{value}</div>
-                  <div className="text-[10px] text-muted-foreground uppercase mt-1 tracking-tighter">{label}</div>
+              <div className="relative group">
+                <div className="text-5xl font-display font-bold gradient-text italic tabular">149 990 DA</div>
+                <div className="text-[10px] text-primary/70 mt-1 uppercase tracking-widest font-bold flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                  Privilège Membre
                 </div>
-              ))}
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="flex flex-col sm:flex-row items-start sm:items-center gap-5 mt-4"
-            >
-              <div>
-                <div className="text-4xl font-display font-bold gradient-text italic">149 990 DA</div>
-                <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-success animate-ping" />
-                  ou 12 500 DA/mois · 0% intérêt
-                </div>
+                <div className="absolute -bottom-2 left-0 w-full h-[1px] bg-primary/20 scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
               </div>
-              <div className="flex gap-3 sm:ml-4">
-                <MagneticButton className="btn-cyber px-8 py-4 rounded-full text-base font-heading font-bold tracking-wide glow-pulse flex items-center gap-2">
-                  Découvrir <ArrowRight className="w-5 h-5" />
+              <div className="flex gap-4 sm:ml-auto">
+                <MagneticButton className="btn-cyber px-10 py-5 rounded-full text-sm font-heading font-bold tracking-[0.1em] uppercase shadow-gold transform hover:scale-105 transition-all duration-300">
+                  Découvrir <ArrowRight className="ml-2 w-5 h-5" />
                 </MagneticButton>
-                <MagneticButton className="btn-ghost-cyber px-8 py-4 rounded-full text-base font-heading font-medium">
-                  Catalogue
+                <MagneticButton className="btn-ghost-cyber px-10 py-5 rounded-full text-sm font-heading font-medium tracking-[0.1em] uppercase backdrop-blur-sm border-white/10 hover:border-primary/40">
+                  Archives
                 </MagneticButton>
               </div>
             </motion.div>

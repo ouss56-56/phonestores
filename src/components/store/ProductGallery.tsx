@@ -189,65 +189,65 @@ export default function ProductGallery() {
             <span className="text-xs font-heading text-primary tracking-widest uppercase font-medium">Collection Vedette</span>
           </div>
           <h2 className="font-display font-bold text-display mb-4">
-            <span className="text-foreground">Nos </span>
-            <span className="gradient-text italic">Téléphones Phares</span>
+            <span className="text-foreground tracking-tighter">Les </span>
+            <span className="gradient-text italic tracking-normal">Chefs-d'œuvre Mobiles</span>
           </h2>
-          <p className="text-muted-foreground max-w-lg mx-auto">
-            Sélection rigoureuse des meilleurs appareils pour les connaisseurs.
+          <p className="text-muted-foreground max-w-lg mx-auto font-light tracking-wide">
+            Une curation rigoureuse des fleurons technologiques, sélectionnés pour l'excellence de leur ingénierie.
           </p>
         </motion.div>
 
         <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <TiltCard className="flex justify-center items-center relative min-h-[400px]">
+          <TiltCard className="flex justify-center items-center relative min-h-[450px]">
             <div
-              className="absolute w-80 h-80 rounded-full blur-[100px] opacity-30 transition-all duration-1000"
+              className="absolute w-96 h-96 rounded-full blur-[120px] opacity-25 transition-all duration-1000"
               style={{ background: accent.color }}
             />
             <motion.div
               key={activeIdx}
-              initial={{ opacity: 0, scale: 0.8, rotateY: -20 }}
+              initial={{ opacity: 0, scale: 0.8, rotateY: -30 }}
               animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
               className="relative z-10"
             >
               <img
                 src={product.image_url || "/placeholder.svg"}
                 alt={product.name}
-                className="w-64 sm:w-80 h-auto object-contain relative z-10 rounded-3xl"
-                style={{ filter: `drop-shadow(0 40px 80px ${accent.color}66)` }}
+                className="w-72 sm:w-96 h-auto object-contain relative z-10 rounded-3xl"
+                style={{ filter: `drop-shadow(0 60px 100px ${accent.color}44)` }}
               />
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent rounded-3xl pointer-events-none holographic opacity-40" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent rounded-3xl pointer-events-none holographic opacity-30" />
             </motion.div>
           </TiltCard>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-8">
             <motion.div
               key={`info-${activeIdx}`}
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-4 mb-6">
                 <span
-                  className="px-4 py-1.5 rounded-full text-xs font-heading font-bold uppercase tracking-wider"
-                  style={{ background: `${accent.color}20`, color: accent.color, border: `1px solid ${accent.color}30` }}
+                  className="px-6 py-2 rounded-full text-[10px] font-heading font-bold uppercase tracking-[0.2em] backdrop-blur-md"
+                  style={{ background: `${accent.color}15`, color: accent.color, border: `1px solid ${accent.color}30` }}
                 >
                   {product.brand}
                 </span>
                 {product.quantity <= (product.low_stock_threshold || 5) && (
-                  <span className="popularity-pulse px-4 py-1.5 rounded-full text-xs font-heading font-bold bg-destructive/10 text-destructive border border-destructive/20 uppercase tracking-wider">
-                    Stock Limité
+                  <span className="popularity-pulse px-6 py-2 rounded-full text-[10px] font-heading font-bold bg-destructive/10 text-destructive border border-destructive/20 uppercase tracking-[0.2em]">
+                    Édition Limitée
                   </span>
                 )}
                 <div className="flex items-center gap-1.5 ml-auto">
                   {[1, 2, 3, 4, 5].map(i => (
-                    <Star key={i} className="w-3.5 h-3.5" fill={i <= 4 ? accent.color : "none"} stroke={accent.color} />
+                    <Star key={i} className="w-3 h-3" fill={i <= 4 ? accent.color : "none"} stroke={accent.color} />
                   ))}
-                  <span className="text-xs font-mono-tech ml-1" style={{ color: accent.color }}>4.9</span>
+                  <span className="text-[10px] font-mono-tech ml-2 uppercase tracking-widest" style={{ color: accent.color }}>Excellence</span>
                 </div>
               </div>
 
-              <h3 className="font-display font-bold text-4xl lg:text-6xl mb-2 italic transition-colors duration-500" style={{ color: accent.color }}>
+              <h3 className="font-display font-bold text-5xl lg:text-7xl mb-4 italic transition-colors duration-700 tracking-tight" style={{ color: accent.color }}>
                 {product.name}
               </h3>
 
@@ -255,14 +255,16 @@ export default function ProductGallery() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="relative group inline-block mb-4"
+                className="relative group inline-block mb-6"
               >
-                <div className="text-4xl lg:text-5xl font-display font-bold text-white mb-1">{formatPrice(product.selling_price)}</div>
-                <div className="h-1 w-full scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-full" style={{ background: accent.color }} />
+                <div className="text-5xl lg:text-7xl font-display font-bold text-white mb-2 tabular italic">{formatPrice(product.selling_price)}</div>
+                <div className="h-[2px] w-full scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left rounded-full" style={{ background: accent.color }} />
               </motion.div>
 
               {product.description && (
-                <p className="text-base text-muted-foreground/90 mt-4 leading-relaxed max-w-xl">{product.description}</p>
+                <p className="text-lg text-muted-foreground/70 mt-6 leading-relaxed max-w-xl font-light">
+                  {product.description}
+                </p>
               )}
 
               <div className="flex flex-wrap gap-4 mt-8">
