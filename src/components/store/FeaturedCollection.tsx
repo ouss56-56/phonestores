@@ -12,16 +12,106 @@ interface FeaturedCollectionProps {
     onQuickView?: (product: StoreProduct) => void;
 }
 
+// Sample data for demonstration
+const SAMPLE_PRODUCTS: StoreProduct[] = [
+    {
+        id: "sample-1",
+        name: "iPhone 15 Pro",
+        brand: "Apple",
+        selling_price: 185000,
+        purchase_price: 160000,
+        quantity: 5,
+        low_stock_threshold: 2,
+        image_url: "https://images.unsplash.com/photo-1696446701796-da61225697cc?w=800&q=80",
+        images: [],
+        color: "Titanium",
+        storage_capacity: "256GB",
+        description: "The ultimate iPhone.",
+        is_featured: true,
+        is_active: true,
+        category_id: null,
+        type: "smartphone",
+        warranty_months: 12,
+        sku: "IP15P-256",
+        added_at: new Date().toISOString(),
+    },
+    {
+        id: "sample-2",
+        name: "Samsung Galaxy S24 Ultra",
+        brand: "Samsung",
+        selling_price: 175000,
+        purchase_price: 150000,
+        quantity: 3,
+        low_stock_threshold: 2,
+        image_url: "https://images.unsplash.com/photo-1707230491501-14022ec1469e?w=800&q=80",
+        images: [],
+        color: "Titanium Gray",
+        storage_capacity: "512GB",
+        description: "Galaxy AI is here.",
+        is_featured: true,
+        is_active: true,
+        category_id: null,
+        type: "smartphone",
+        warranty_months: 12,
+        sku: "S24U-512",
+        added_at: new Date().toISOString(),
+    },
+    {
+        id: "sample-3",
+        name: "AirPods Pro (2nd Gen)",
+        brand: "Apple",
+        selling_price: 45000,
+        purchase_price: 35000,
+        quantity: 10,
+        low_stock_threshold: 3,
+        image_url: "https://images.unsplash.com/photo-1588156979435-3757a120288d?w=800&q=80",
+        images: [],
+        color: "White",
+        storage_capacity: null,
+        description: "Magical experience.",
+        is_featured: true,
+        is_active: true,
+        category_id: null,
+        type: "accessory",
+        warranty_months: 6,
+        sku: "APP2",
+        added_at: new Date().toISOString(),
+    },
+    {
+        id: "sample-4",
+        name: "Sony WH-1000XM5",
+        brand: "Sony",
+        selling_price: 65000,
+        purchase_price: 55000,
+        quantity: 2,
+        low_stock_threshold: 1,
+        image_url: "https://images.unsplash.com/photo-1628202926206-c63a34b1618f?w=800&q=80",
+        images: [],
+        color: "Black",
+        storage_capacity: null,
+        description: "Best noise cancelling.",
+        is_featured: true,
+        is_active: true,
+        category_id: null,
+        type: "accessory",
+        warranty_months: 12,
+        sku: "XM5-BLK",
+        added_at: new Date().toISOString(),
+    }
+];
+
 export default function FeaturedCollection({ onQuickView }: FeaturedCollectionProps) {
     const { t } = useI18n();
     const { addItem } = useCart();
     const { toggle, has } = useWishlist();
 
-    const { data: products = [], isLoading } = useQuery({
+    const { data: dbProducts = [], isLoading } = useQuery({
         queryKey: ['products', 'featured'],
         queryFn: () => storeApi.fetchProducts({ limit: 12 }),
         staleTime: 30_000,
     });
+
+    const products = dbProducts.length > 0 ? dbProducts : SAMPLE_PRODUCTS;
 
     const formatPrice = (price: number) =>
         new Intl.NumberFormat("fr-DZ").format(price) + " DA";

@@ -113,7 +113,7 @@ export function SalesModule() {
     };
 
     if (loading) {
-        return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
+        return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-black/10 border-t-black rounded-full animate-spin" /></div>;
     }
 
     return (
@@ -221,7 +221,7 @@ export function SalesModule() {
                             )}
                         </div>
 
-                        <div className="p-6 bg-[#0F0F1A]/80 border-t border-white/10 backdrop-blur-xl">
+                        <div className="p-6 bg-[#FAFAFA]/95 border-t border-black/5 backdrop-blur-xl">
                             <div className="space-y-3 mb-6">
                                 <div className="flex justify-between">
                                     <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Sous-total</span>

@@ -36,7 +36,7 @@ export function InventoryModule() {
     };
 
     if (loading) {
-        return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
+        return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-black/10 border-t-black rounded-full animate-spin" /></div>;
     }
 
     const totalIn = movements.filter(m => m.change > 0).reduce((sum, m) => sum + m.change, 0);
@@ -68,7 +68,7 @@ export function InventoryModule() {
                     </h4>
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         {lowStock.slice(0, 6).map(p => (
-                            <div key={p.id} className="bg-white/5 rounded-xl p-3 flex justify-between items-center">
+                            <div key={p.id} className="bg-black/5 rounded-xl p-3 flex justify-between items-center">
                                 <div>
                                     <div className="text-xs font-bold text-white">{p.name}</div>
                                     <div className="text-[10px] text-muted-foreground">{p.brand}</div>

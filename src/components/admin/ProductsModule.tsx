@@ -89,7 +89,7 @@ export function ProductsModule() {
     };
 
     if (loading) {
-        return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
+        return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-black/10 border-t-black rounded-full animate-spin" /></div>;
     }
 
     return (
@@ -101,11 +101,11 @@ export function ProductsModule() {
                 <div className="flex gap-3 w-full lg:w-auto">
                     <input ref={fileInputRef} type="file" accept=".csv" className="hidden" onChange={handleCSVImport} />
                     <button onClick={() => fileInputRef.current?.click()}
-                        className="flex-1 lg:flex-none glass border border-white/10 px-4 py-3 rounded-2xl text-[10px] font-bold text-white uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-white/10 transition-all">
+                        className="flex-1 lg:flex-none glass border border-black/5 px-4 py-3 rounded-2xl text-[10px] font-medium text-[#111111] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-black/5 transition-all">
                         <Upload className="w-4 h-4" /> Importer CSV
                     </button>
                     <button onClick={handleCSVExport}
-                        className="flex-1 lg:flex-none glass border border-white/10 px-4 py-3 rounded-2xl text-[10px] font-bold text-white uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-white/10 transition-all">
+                        className="flex-1 lg:flex-none glass border border-black/5 px-4 py-3 rounded-2xl text-[10px] font-medium text-[#111111] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-black/5 transition-all">
                         <Download className="w-4 h-4" /> Exporter CSV
                     </button>
                     <button onClick={() => setShowAddForm(!showAddForm)}
@@ -135,11 +135,11 @@ export function ProductsModule() {
                             { label: 'Fournisseur', key: 'supplier', type: 'text' },
                         ].map(({ label, key, type }) => (
                             <div key={key} className="space-y-1">
-                                <label className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">{label}</label>
+                                <label className="text-[10px] text-black/40 uppercase font-medium tracking-widest">{label}</label>
                                 <input type={type}
                                     value={newProduct[key as keyof Product] as string || ''}
                                     onChange={(e) => setNewProduct({ ...newProduct, [key]: type === 'number' ? Number(e.target.value) : e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-primary/50" />
+                                    className="w-full bg-black/5 border border-black/5 rounded-xl py-2.5 px-3 text-sm text-[#111111] outline-none focus:border-black/20" />
                             </div>
                         ))}
                         <div className="space-y-1">
@@ -163,17 +163,17 @@ export function ProductsModule() {
             )}
 
             {/* Products Table */}
-            <div className="glass-card rounded-[2.5rem] overflow-hidden border-white/5 shadow-2xl">
+            <div className="glass-card rounded-[2.5rem] overflow-hidden border-black/5 bg-white shadow-sm">
                 <div className="overflow-x-auto custom-scrollbar">
                     <table className="w-full">
                         <thead>
-                            <tr className="bg-white/[0.03] border-b border-white/5">
-                                <th className="text-left px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Produit</th>
-                                <th className="text-left px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">SKU / Code-barres</th>
-                                <th className="text-left px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Prix</th>
-                                <th className="text-left px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest text-center">Marge</th>
-                                <th className="text-left px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Stock</th>
-                                <th className="text-left px-6 py-5 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Statut</th>
+                            <tr className="bg-black/[0.02] border-b border-black/5">
+                                <th className="text-left px-6 py-5 text-[10px] font-medium text-black/40 uppercase tracking-widest">Produit</th>
+                                <th className="text-left px-6 py-5 text-[10px] font-medium text-black/40 uppercase tracking-widest">SKU / Code-barres</th>
+                                <th className="text-left px-6 py-5 text-[10px] font-medium text-black/40 uppercase tracking-widest">Prix</th>
+                                <th className="text-left px-6 py-5 text-[10px] font-medium text-black/40 uppercase tracking-widest text-center">Marge</th>
+                                <th className="text-left px-6 py-5 text-[10px] font-medium text-black/40 uppercase tracking-widest">Stock</th>
+                                <th className="text-left px-6 py-5 text-[10px] font-medium text-black/40 uppercase tracking-widest">Statut</th>
                                 <th className="px-6 py-5"></th>
                             </tr>
                         </thead>
@@ -187,12 +187,12 @@ export function ProductsModule() {
                                         className="hover:bg-white/[0.01] transition-colors group">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-white/10 to-transparent flex items-center justify-center text-xs font-bold text-primary border border-white/5">
+                                                <div className="w-10 h-10 rounded-xl bg-black/5 flex items-center justify-center text-xs font-medium text-black border border-black/5">
                                                     {p.brand[0]}
                                                 </div>
                                                 <div>
-                                                    <div className="text-sm font-bold text-white">{p.name}</div>
-                                                    <div className="text-[10px] text-muted-foreground uppercase tracking-widest">{p.brand} • {p.type || 'phone'}</div>
+                                                    <div className="text-sm font-medium text-[#111111]">{p.name}</div>
+                                                    <div className="text-[10px] text-black/40 uppercase tracking-widest">{p.brand} • {p.type || 'phone'}</div>
                                                 </div>
                                             </div>
                                         </td>

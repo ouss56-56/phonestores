@@ -16,15 +16,15 @@ export function StatCard({ title, value, icon: Icon, accent, trend, delay = 0 }:
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay }}
-            className="glass-card rounded-3xl p-5 border-white/5 relative overflow-hidden group hover:border-white/10 transition-all duration-500"
+            className="glass-card rounded-3xl p-5 border-black/5 bg-white relative overflow-hidden group hover:shadow-sm transition-all duration-500"
         >
             <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-white/5 bg-white/5">
-                    <Icon className="w-4 h-4 text-muted-foreground" />
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-black/5 bg-black/5">
+                    <Icon className="w-4 h-4 text-black/40" />
                 </div>
-                <span className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold">{title}</span>
+                <span className="text-[9px] text-black/40 uppercase tracking-widest font-medium">{title}</span>
             </div>
-            <div className="text-xl font-mono-tech font-bold text-white tracking-tight">
+            <div className="text-xl font-mono-tech font-bold text-[#111111] tracking-tight">
                 <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
                     {typeof value === 'number' ? value.toLocaleString() : value}
                 </motion.span>

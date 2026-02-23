@@ -11,21 +11,17 @@
 
 @layer base {
   :root {
-    /* ── Storefront palette ── */
-    --background: 0 0% 98%;
-    /* #FAFAFA */
-    --foreground: 0 0% 7%;
-    /* #111111 */
+    /* ── Storefront & Control Panel palette ── */
+    --background: 0 0% 98%;    /* #FAFAFA */
+    --foreground: 0 0% 7%;      /* #111111 */
 
-    --card: 0 0% 95%;
-    /* #F2F2F2 */
+    --card: 0 0% 95%;          /* #F2F2F2 */
     --card-foreground: 0 0% 7%;
 
     --popover: 0 0% 98%;
     --popover-foreground: 0 0% 7%;
 
-    --primary: 0 0% 7%;
-    /* soft black as primary */
+    --primary: 0 0% 7%;        /* soft black */
     --primary-foreground: 0 0% 98%;
 
     --secondary: 0 0% 95%;
@@ -49,13 +45,15 @@
 
     --radius: 0.75rem;
 
-    /* ── Motion tokens ── */
+    /* ── Motion tokens (Global) ── */
     --ease-micro: cubic-bezier(0.22, 0.9, 0.3, 1);
-    --duration-micro: 250ms;
+    --duration-micro: 250ms; /* 200–300ms */
+    
     --ease-section: ease-in-out;
-    --duration-section: 700ms;
-    --ease-color-shift: cubic-bezier(0.22, 0.9, 0.3, 1);
-    --duration-color-shift: 800ms;
+    --duration-section: 750ms; /* 600–900ms */
+    
+    --ease-color-shift: ease-in-out;
+    --duration-color-shift: 800ms; /* 700–900ms */
 
     /* ── Surfaces ── */
     --surface-white: #FAFAFA;
@@ -63,21 +61,20 @@
     --border-subtle: rgba(0, 0, 0, 0.06);
     --hover-subtle: rgba(17, 17, 17, 0.04);
 
-    /* ── Sidebar (admin) ── */
-    --sidebar-background: 220 12% 4%;
-    --sidebar-foreground: 40 10% 95%;
-    --sidebar-primary: 38 75% 55%;
-    --sidebar-primary-foreground: 220 15% 5%;
-    --sidebar-accent: 220 10% 10%;
-    --sidebar-accent-foreground: 40 10% 95%;
-    --sidebar-border: 220 8% 10%;
-    --sidebar-ring: 38 75% 55%;
+    /* ── Sidebar & Surfaces (Admin/Control Panel) ── */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 7%;
+    --sidebar-primary: 0 0% 7%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 95%;
+    --sidebar-accent-foreground: 0 0% 7%;
+    --sidebar-border: 0 0% 94%;
+    --sidebar-ring: 0 0% 7%;
 
-    /* ── Admin surfaces ── */
-    --surface-01: 220 8% 7%;
-    --surface-02: 220 6% 9%;
-    --surface-03: 220 5% 12%;
-    --surface-04: 220 4% 15%;
+    --surface-01: 0 0% 98%;
+    --surface-02: 0 0% 95%;
+    --surface-03: 0 0% 92%;
+    --surface-04: 0 0% 89%;
 
     /* ── Status colors ── */
     --status-green: 142 70% 45%;
@@ -86,7 +83,6 @@
     --status-blue: 210 100% 60%;
     --status-yellow: 48 100% 50%;
 
-    /* ── Charts ── */
     /* ── Dynamic Color Intelligence ── */
     --dynamic-bg-start: #FAFAFA;
     --dynamic-bg-end: #E8E8E8;
@@ -105,55 +101,65 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Satoshi', sans-serif;
     background: hsl(var(--background));
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-weight: 500; /* Medium weight for body */
   }
 
   /* RTL support — when body has .rtl class */
   body.rtl {
     direction: rtl;
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Cairo', 'Noto Naskh Arabic', sans-serif;
   }
 
   body.rtl h1,
   body.rtl h2,
   body.rtl h3,
   body.rtl h4 {
-    font-family: 'Cairo', sans-serif;
+    font-family: 'Cairo', 'Noto Naskh Arabic', sans-serif;
+    font-weight: 300; /* Light weight for headings */
   }
 
   h1,
   h2,
   h3,
   h4 {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Satoshi', sans-serif;
+    font-weight: 300; /* Light weight for headings */
   }
 
   .font-display {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Satoshi', sans-serif;
     font-weight: 300;
   }
 
   .font-heading {
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
+    font-family: 'Inter', 'Satoshi', sans-serif;
+    font-weight: 300;
   }
 
   .font-mono-tech {
     font-family: 'JetBrains Mono', monospace;
   }
 
-  /* Legacy aliases — keep for admin compatibility */
-  .font-orbitron {
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-  }
-
-  .font-grotesk {
-    font-family: 'Outfit', sans-serif;
+  /* Fallback for reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-delay: -1ms !important;
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      background-attachment: initial !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0s !important;
+      transition-delay: 0s !important;
+    }
+    
+    .animate-shimmer, .popularity-pulse, .animate-spiral-in, .ambient-sheen::after {
+      display: none !important;
+    }
   }
 }
 
@@ -186,7 +192,7 @@
   .ps-btn-primary {
     background: #111111;
     color: #FAFAFA;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Satoshi', sans-serif;
     font-weight: 500;
     font-size: 0.875rem;
     letter-spacing: 0.02em;
@@ -208,7 +214,7 @@
   .ps-btn-secondary {
     background: transparent;
     color: #111111;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Satoshi', sans-serif;
     font-weight: 500;
     font-size: 0.875rem;
     letter-spacing: 0.02em;
@@ -261,7 +267,7 @@
     background: var(--surface-white);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius);
-    font-family: 'Inter', sans-serif;
+    font-family: 'Inter', 'Satoshi', sans-serif;
     font-size: 0.9375rem;
     color: #111111;
     outline: none;
@@ -350,33 +356,33 @@
      ═══════════════════════════════════════ */
 
   .admin-scope {
-    --background: 220 15% 3%;
-    --foreground: 40 10% 98%;
-    --card: 220 12% 6%;
-    --card-foreground: 40 10% 98%;
-    --popover: 220 12% 6%;
-    --popover-foreground: 40 10% 98%;
-    --primary: 38 75% 55%;
-    --primary-foreground: 220 15% 5%;
-    --secondary: 15 85% 55%;
-    --secondary-foreground: 40 10% 98%;
-    --muted: 220 10% 10%;
-    --muted-foreground: 220 10% 60%;
-    --accent: 38 75% 55%;
-    --accent-foreground: 220 15% 5%;
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 40 10% 98%;
-    --border: 220 8% 12%;
-    --input: 220 12% 8%;
-    --ring: 38 75% 55%;
-    --glass-bg: rgba(10, 10, 15, 0.75);
-    --glass-border: rgba(255, 215, 0, 0.12);
+    --background: var(--background);
+    --foreground: var(--foreground);
+    --card: var(--card);
+    --card-foreground: var(--card-foreground);
+    --popover: var(--popover);
+    --popover-foreground: var(--popover-foreground);
+    --primary: var(--primary);
+    --primary-foreground: var(--primary-foreground);
+    --secondary: var(--secondary);
+    --secondary-foreground: var(--secondary-foreground);
+    --muted: var(--muted);
+    --muted-foreground: var(--muted-foreground);
+    --accent: var(--accent);
+    --accent-foreground: var(--accent-foreground);
+    --destructive: var(--destructive);
+    --destructive-foreground: var(--destructive-foreground);
+    --border: var(--border);
+    --input: var(--input);
+    --ring: var(--ring);
+    --glass-bg: rgba(250, 250, 250, 0.75);
+    --glass-border: rgba(0, 0, 0, 0.06);
     --glass-blur: 28px;
-    --gradient-hero: radial-gradient(circle at top right, hsl(38 40% 15%) 0%, hsl(220 15% 3%) 60%);
-    --gradient-accent: linear-gradient(135deg, hsl(38 75% 55%) 0%, hsl(15 85% 55%) 100%);
-    --gradient-card: linear-gradient(180deg, hsla(220, 12%, 10%, 0.8) 0%, hsla(220, 15%, 5%, 0.9) 100%);
-    --shadow-gold: 0 0 40px hsla(38, 75%, 55%, 0.15), 0 0 80px hsla(38, 75%, 55%, 0.05);
-    --shadow-premium: 0 10px 40px -10px rgba(0, 0, 0, 0.7), 0 0 1px 1px rgba(255, 255, 255, 0.05) inset;
+    --gradient-hero: radial-gradient(circle at top right, #FAFAFA 0%, #F2F2F2 60%);
+    --gradient-accent: linear-gradient(135deg, #111111 0%, #333333 100%);
+    --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(245, 245, 245, 0.9) 100%);
+    --shadow-gold: 0 0 40px rgba(0, 0, 0, 0.05), 0 0 80px rgba(0, 0, 0, 0.02);
+    --shadow-premium: 0 10px 40px -10px rgba(0, 0, 0, 0.1), 0 0 1px 1px rgba(0, 0, 0, 0.02) inset;
     background: hsl(var(--background));
     color: hsl(var(--foreground));
   }
@@ -396,52 +402,55 @@
   }
 
   .admin-scope .glass-card {
-    background: rgba(18, 18, 24, 0.55);
+    background: rgba(255, 255, 255, 0.55);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 180, 120, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.06);
   }
 
   .admin-scope .glass-strong {
-    background: rgba(18, 18, 24, 0.85);
+    background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(30px);
     -webkit-backdrop-filter: blur(30px);
-    border: 1px solid rgba(255, 180, 120, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.08);
   }
 
   .admin-scope .cyber-grid {
     background-image:
-      linear-gradient(rgba(255, 180, 120, 0.015) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 180, 120, 0.015) 1px, transparent 1px);
+      linear-gradient(rgba(0, 0, 0, 0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.015) 1px, transparent 1px);
     background-size: 80px 80px;
   }
 
   .admin-scope .btn-cyber {
     background: var(--gradient-accent);
-    color: hsl(220 15% 5%);
-    font-family: 'Outfit', sans-serif;
-    font-weight: 600;
+    color: white;
+    font-family: 'Inter', 'Satoshi', sans-serif;
+    font-weight: 500;
     letter-spacing: 0.02em;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
+    border-radius: 0.75rem;
   }
 
   .admin-scope .btn-cyber:hover {
     transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   }
 
   .admin-scope .btn-ghost-cyber {
     background: transparent;
-    color: hsl(15 85% 55%);
-    border: 1px solid hsla(15, 85%, 55%, 0.4);
-    font-family: 'Outfit', sans-serif;
+    color: #111111;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-family: 'Inter', 'Satoshi', sans-serif;
     font-weight: 500;
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 0.75rem;
   }
 
   .admin-scope .btn-ghost-cyber:hover {
-    background: hsla(15, 85%, 55%, 0.08);
+    background: rgba(17, 17, 17, 0.04);
     transform: translateY(-2px);
   }
 
@@ -464,11 +473,11 @@
   }
 
   .text-foreground-muted {
-    color: hsl(220 8% 55%);
+    color: hsl(0 0% 45%);
   }
 
   .text-foreground-subtle {
-    color: hsl(220 8% 38%);
+    color: hsl(0 0% 60%);
   }
 
   .text-status-green {
@@ -537,17 +546,8 @@
 
   /* ── Animations ── */
   @keyframes popularityPulse {
-
-    0%,
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    50% {
-      opacity: 0.8;
-      transform: scale(1.03);
-    }
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.03); }
   }
 
   .popularity-pulse {
@@ -555,19 +555,13 @@
   }
 
   @keyframes shimmer {
-    0% {
-      transform: translateX(-100%);
-    }
-
-    100% {
-      transform: translateX(100%);
-    }
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
   }
 
   .animate-shimmer {
     animation: shimmer 2s infinite;
   }
-
 
   /* -- Premium Effects -- */
   
@@ -603,7 +597,7 @@
     left: 0;
     width: 100%;
     height: 1px;
-    background: #FF0000;
+    background: #111111;
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);

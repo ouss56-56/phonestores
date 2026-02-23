@@ -66,22 +66,22 @@ export default function Admin() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#0A0A0F] text-foreground selection:bg-primary/30 overflow-hidden">
+    <div className="min-h-screen flex bg-[#FAFAFA] text-[#111111] selection:bg-black/5 overflow-hidden">
       {/* Sidebar */}
-      <aside className={`fixed lg:static inset-y-0 left-0 z-50 flex flex-col w-72 border-r border-white/5 glass-strong transition-all duration-500 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-24'}`}>
-        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+      <aside className={`fixed lg:static inset-y-0 left-0 z-50 flex flex-col w-72 border-r border-black/5 bg-[#FAFAFA] transition-all duration-500 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-24'}`}>
+        <div className="p-6 border-b border-black/5 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center shadow-lg shadow-black/10 shrink-0">
               <Smartphone className="w-5 h-5 text-white" />
             </div>
             {isSidebarOpen && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <span className="font-heading font-bold text-lg tracking-tight text-white italic">LUMINA</span>
-                <div className="text-[10px] text-primary font-mono-tech tracking-wider uppercase font-bold">ADMIN</div>
+                <span className="font-heading font-medium text-lg tracking-tight text-[#111111] uppercase">Store</span>
+                <div className="text-[10px] text-[#111111]/60 font-medium tracking-wider uppercase">Control Panel</div>
               </motion.div>
             )}
           </Link>
-          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="lg:hidden text-white"><X className="w-6 h-6" /></button>
+          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="lg:hidden text-[#111111]"><X className="w-6 h-6" /></button>
         </div>
 
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto custom-scrollbar">
@@ -111,37 +111,37 @@ export default function Admin() {
       {/* Main content */}
       <main className="flex-1 min-h-screen flex flex-col relative overflow-hidden">
         {/* Header */}
-        <header className="sticky top-0 z-30 glass-strong border-b border-white/5 px-8 py-5 flex items-center justify-between shrink-0">
+        <header className="sticky top-0 z-30 bg-[#FAFAFA]/80 backdrop-blur-md border-b border-black/5 px-8 py-5 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4">
-            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 lg:hidden text-white"><Menu className="w-6 h-6" /></button>
+            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 lg:hidden text-[#111111]"><Menu className="w-6 h-6" /></button>
             <div>
-              <h1 className="font-heading font-bold text-xl text-white italic uppercase tracking-[0.2em]">{tabs.find(t => t.id === activeTab)?.label}</h1>
+              <h1 className="font-heading font-light text-xl text-[#111111] uppercase tracking-[0.2em]">{tabs.find(t => t.id === activeTab)?.label}</h1>
               <div className="flex items-center gap-2 mt-0.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <p className="text-[10px] text-muted-foreground font-mono-tech tracking-wider uppercase">Système Lumina v2.0 • Session Sécurisée</p>
+                <p className="text-[10px] text-[#111111]/40 font-medium tracking-wider uppercase">Store Management System • Secure Session</p>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center bg-white/5 border border-white/10 rounded-2xl px-4 py-2 hover:border-primary/50 transition-all group">
-              <Search className="w-4 h-4 text-muted-foreground mr-3 group-hover:text-primary transition-colors" />
-              <input type="text" placeholder="Recherche rapide..." className="bg-transparent text-xs outline-none text-white w-48 font-bold placeholder:font-normal" />
+            <div className="hidden md:flex items-center bg-[#F2F2F2] border border-black/5 rounded-2xl px-4 py-2 hover:border-black/10 transition-all group">
+              <Search className="w-4 h-4 text-[#111111]/40 mr-3 group-hover:text-[#111111] transition-colors" />
+              <input type="text" placeholder="Recherche rapide..." className="bg-transparent text-xs outline-none text-[#111111] w-48 font-medium placeholder:font-normal" />
             </div>
 
-            <button className="relative w-11 h-11 rounded-2xl glass border border-white/10 flex items-center justify-center text-muted-foreground hover:text-primary transition-all hover:scale-105 active:scale-95 group">
+            <button className="relative w-11 h-11 rounded-2xl bg-white border border-black/5 flex items-center justify-center text-[#111111]/40 hover:text-[#111111] transition-all hover:scale-105 active:scale-95 group">
               <Bell className="w-5 h-5" />
-              <span className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-rose-500 border-2 border-[#0A0A0F]" />
+              <span className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-rose-500 border-2 border-[#FAFAFA]" />
               {/* Notification Pulse */}
               <span className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping opacity-75" />
             </button>
 
-            <div className="flex items-center gap-4 pl-4 border-l border-white/5">
+            <div className="flex items-center gap-4 pl-4 border-l border-black/5">
               <div className="text-right hidden sm:block">
-                <div className="text-xs font-bold text-white uppercase tracking-tighter">Administrateur</div>
-                <div className="text-[9px] text-primary font-mono-tech uppercase">Ressources Humaines</div>
+                <div className="text-xs font-medium text-[#111111] uppercase tracking-tighter">Administrateur</div>
+                <div className="text-[9px] text-[#111111]/50 font-medium uppercase">Gestionnaire</div>
               </div>
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-sm font-bold text-white shadow-xl shadow-primary/10 border border-white/10 hover:rotate-6 transition-all cursor-pointer">
+              <div className="w-11 h-11 rounded-2xl bg-black flex items-center justify-center text-sm font-medium text-white shadow-xl shadow-black/10 border border-black/5 hover:rotate-6 transition-all cursor-pointer">
                 AD
               </div>
             </div>
