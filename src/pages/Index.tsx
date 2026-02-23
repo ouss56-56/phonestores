@@ -1,24 +1,47 @@
+import { useState } from "react";
 import Navbar from "@/components/store/Navbar";
 import HeroSection from "@/components/store/HeroSection";
-import ProductGallery from "@/components/store/ProductGallery";
-import FeaturesSection from "@/components/store/FeaturesSection";
-import ReviewsSection from "@/components/store/ReviewsSection";
+import CategoryShowcase from "@/components/store/CategoryShowcase";
+import FeaturedCollection from "@/components/store/FeaturedCollection";
+import ProductHighlight from "@/components/store/ProductHighlight";
+import InquiryForm from "@/components/store/InquiryForm";
 import Footer from "@/components/store/Footer";
-import { LiquidDivider, ThreadLine } from "@/components/ui/animations";
+import QuickViewModal from "@/components/store/QuickViewModal";
+import { StoreProduct } from "@/services/storeApi";
 
 const Index = () => {
+  const [selectedProduct, setSelectedProduct] = useState<StoreProduct | null>(null);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+
+  const handleQuickView = (product: StoreProduct) => {
+    setSelectedProduct(product);
+    setIsQuickViewOpen(true);
+  };
+
+  const closeQuickView = () => {
+    setIsQuickViewOpen(false);
+    setTimeout(() => setSelectedProduct(null), 300); // Wait for animation
+  };
+
   return (
-    <div className="relative min-h-screen bg-background">
-      <ThreadLine />
+    <div className="min-h-screen bg-background">
       <Navbar />
       <HeroSection />
-      <LiquidDivider />
-      <ProductGallery />
-      <LiquidDivider color="hsl(35,90%,50%)" />
-      <FeaturesSection />
-      <LiquidDivider />
-      <ReviewsSection />
+
+      <main className="relative">
+        <CategoryShowcase />
+        <FeaturedCollection onQuickView={handleQuickView} />
+        <ProductHighlight />
+        <InquiryForm />
+      </main>
+
       <Footer />
+
+      <QuickViewModal
+        product={selectedProduct}
+        isOpen={isQuickViewOpen}
+        onClose={closeQuickView}
+      />
     </div>
   );
 };
