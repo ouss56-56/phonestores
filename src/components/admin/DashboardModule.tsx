@@ -65,7 +65,7 @@ export function DashboardModule() {
     };
 
     if (loading) {
-        return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-black/10 border-t-black rounded-full animate-spin" /></div>;
+        return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-admin-border border-t-admin-btn rounded-full animate-spin" /></div>;
     }
 
     const m = metrics || { today_sales: 0, daily_net_profit: 0, orders_count: 0, avg_invoice_value: 0, low_stock_count: 0, slow_moving_count: 0, devices_in_repair: 0 };
@@ -89,35 +89,35 @@ export function DashboardModule() {
 
             {/* AI Insights */}
             <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }}
-                className="bg-black/[0.02] border border-black/5 p-4 rounded-2xl flex items-center justify-between gap-6 overflow-hidden relative">
-                <div className="flex items-center gap-2 text-black whitespace-nowrap">
+                className="bg-admin-card border border-admin-border p-4 rounded-2xl flex items-center justify-between gap-6 overflow-hidden relative shadow-sm">
+                <div className="flex items-center gap-2 text-admin-primary whitespace-nowrap">
                     <Zap className="w-4 h-4" />
                     <span className="text-[10px] font-medium uppercase tracking-widest">AI Insights</span>
                 </div>
                 <div className="flex-1 flex gap-8 items-center overflow-x-auto no-scrollbar">
                     {recommendations.map((rec, i) => (
                         <div key={i} className="flex items-center gap-2 whitespace-nowrap">
-                            <div className="w-1 h-1 rounded-full bg-white/20" />
-                            <span className="text-[11px] text-muted-foreground">{rec.description}</span>
+                            <div className="w-1 h-1 rounded-full bg-admin-border" />
+                            <span className="text-[11px] text-admin-secondary font-medium">{rec.description}</span>
                         </div>
                     ))}
                 </div>
-                <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#FAFAFA] to-transparent pointer-events-none" />
+                <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-admin-bg to-transparent pointer-events-none" />
             </motion.div>
 
             <div className="grid lg:grid-cols-3 gap-8">
                 {/* Sales Chart */}
-                <div className="lg:col-span-2 glass-card rounded-[2rem] p-8 border-black/5 bg-white shadow-sm">
-                    <h3 className="text-xl font-heading font-light text-[#111111] uppercase tracking-widest mb-8">Ventes (30 jours)</h3>
+                <div className="lg:col-span-2 rounded-[2rem] p-8 border border-admin-border bg-admin-card shadow-sm">
+                    <h3 className="text-xl font-heading font-light text-admin-title uppercase tracking-widest mb-8">Ventes (30 jours)</h3>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={chartData}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
-                                <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#111111', opacity: 0.4, fontSize: 10 }}
+                                <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#737373', opacity: 0.8, fontSize: 10 }}
                                     tickFormatter={(v) => v.split('-').slice(1).join('/')} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#111111', opacity: 0.4, fontSize: 10 }}
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#737373', opacity: 0.8, fontSize: 10 }}
                                     tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
-                                <Tooltip contentStyle={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '16px', boxShadow: '0 8px 30px rgba(0,0,0,0.04)' }} />
+                                <Tooltip contentStyle={{ background: '#FFFFFF', border: '1px solid #EDEDED', borderRadius: '16px', boxShadow: '0 8px 30px rgba(0,0,0,0.04)' }} />
                                 <Area type="monotone" dataKey="revenue" stroke="#111111" fill="rgba(17,17,17,0.02)" strokeWidth={2} />
                             </AreaChart>
                         </ResponsiveContainer>
@@ -125,19 +125,25 @@ export function DashboardModule() {
                 </div>
 
                 {/* AI Recommendations */}
-                <div className="glass-card rounded-[2rem] p-8 border-black/5 space-y-6 bg-white shadow-sm">
+                <div className="rounded-[2rem] p-8 border border-admin-border space-y-6 bg-admin-card shadow-sm">
                     <div className="flex items-center gap-3">
-                        <Zap className="w-5 h-5 text-black" />
-                        <h3 className="text-xl font-heading font-light text-[#111111] uppercase tracking-widest">Lumina AI</h3>
+                        <Zap className="w-5 h-5 text-admin-title" />
+                        <h3 className="text-xl font-heading font-light text-admin-title uppercase tracking-widest">Lumina AI</h3>
                     </div>
                     <div className="space-y-4">
                         {recommendations.map((rec, i) => {
                             const color = rec.type === 'restock' ? 'amber' : rec.type === 'price_reduction' ? 'emerald' : 'blue';
+                            const colors: Record<string, string> = {
+                                amber: "bg-amber-50 border-amber-200 text-amber-600",
+                                emerald: "bg-emerald-50 border-emerald-200 text-emerald-600",
+                                blue: "bg-blue-50 border-blue-200 text-blue-600"
+                            };
+                            const c = colors[color];
                             return (
-                                <div key={i} className={`bg-${color}-500/5 border border-${color}-500/20 p-5 rounded-3xl group cursor-pointer hover:bg-${color}-500/10 transition-all`}>
-                                    <div className={`text-[10px] font-bold text-${color}-500 uppercase mb-1 tracking-widest`}>{rec.title}</div>
-                                    <p className="text-[11px] text-muted-foreground leading-relaxed mb-3">{rec.description}</p>
-                                    <button className={`text-[10px] font-bold text-${color}-500 uppercase flex items-center gap-1 group-hover:gap-2 transition-all`}>
+                                <div key={i} className={`${c.split(' ').slice(0, 2).join(' ')} border p-5 rounded-3xl group cursor-pointer hover:shadow-soft transition-all`}>
+                                    <div className={`text-[10px] font-bold ${c.split(' ')[2]} uppercase mb-1 tracking-widest`}>{rec.title}</div>
+                                    <p className="text-[11px] text-admin-secondary leading-relaxed mb-3">{rec.description}</p>
+                                    <button className={`text-[10px] font-bold ${c.split(' ')[2]} uppercase flex items-center gap-1 group-hover:gap-2 transition-all`}>
                                         {rec.action_label} <ArrowUpRight className="w-3 h-3" />
                                     </button>
                                 </div>
@@ -149,17 +155,17 @@ export function DashboardModule() {
 
             {/* Capital Distribution */}
             {capitalDist.length > 0 && (
-                <div className="glass-card rounded-[2rem] p-8 border-black/5 bg-white shadow-sm">
-                    <h3 className="text-xl font-heading font-light text-[#111111] uppercase tracking-widest mb-8">Répartition du Capital</h3>
+                <div className="rounded-[2rem] p-8 border border-admin-border bg-admin-card shadow-sm">
+                    <h3 className="text-xl font-heading font-light text-admin-title uppercase tracking-widest mb-8">Répartition du Capital</h3>
                     <div className="h-[280px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={capitalDist}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#111111', opacity: 0.4, fontSize: 10, fontWeight: 500 }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#111111', opacity: 0.4, fontSize: 10 }}
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#737373', opacity: 0.8, fontSize: 10, fontWeight: 500 }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#737373', opacity: 0.8, fontSize: 10 }}
                                     tickFormatter={(v) => `${(v / 1000000).toFixed(1)}M`} />
                                 <Tooltip cursor={{ fill: 'rgba(0,0,0,0.02)' }}
-                                    contentStyle={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '16px', boxShadow: '0 8px 30px rgba(0,0,0,0.04)' }} />
+                                    contentStyle={{ background: '#FFFFFF', border: '1px solid #EDEDED', borderRadius: '16px', boxShadow: '0 8px 30px rgba(0,0,0,0.04)' }} />
                                 <Bar dataKey="value" fill="#111111" radius={[8, 8, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>

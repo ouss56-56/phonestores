@@ -87,6 +87,17 @@
     --dynamic-bg-start: #FAFAFA;
     --dynamic-bg-end: #E8E8E8;
     --dynamic-accent: 0 0% 7%;
+
+    /* ── Admin Dashboard Semantic Tokens ── */
+    --admin-bg: #FAFAFA;
+    --admin-text-primary: #262626;
+    --admin-text-secondary: #737373;
+    --admin-text-title: #111111;
+    --admin-card-bg: #FFFFFF;
+    --admin-card-border: #EDEDED;
+    --admin-btn-primary: #111111;
+    --admin-btn-hover: #333333;
+    --admin-shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.03);
   }
 }
 

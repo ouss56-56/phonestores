@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { AuditAction } from "@/lib/admin-types";
+import type { AuditAction, AuditLog } from "@/lib/admin-types";
 
 export const auditService = {
     async log(params: {
@@ -22,7 +22,7 @@ export const auditService = {
         if (error) console.error('Audit log failed:', error);
     },
 
-    async getLogsForEntity(entity: string, entityId?: string, limit = 50) {
+    async getLogsForEntity(entity: string, entityId?: string, limit = 50): Promise<AuditLog[]> {
         let query = supabase
             .from('audit_logs')
             .select('*')
@@ -36,10 +36,10 @@ export const auditService = {
 
         const { data, error } = await query;
         if (error) throw error;
-        return data;
+        return data as unknown as AuditLog[];
     },
 
-    async getRecentLogs(limit = 100) {
+    async getRecentLogs(limit = 100): Promise<AuditLog[]> {
         const { data, error } = await supabase
             .from('audit_logs')
             .select('*')
@@ -47,6 +47,6 @@ export const auditService = {
             .limit(limit);
 
         if (error) throw error;
-        return data;
+        return data as unknown as AuditLog[];
     }
 };

@@ -66,22 +66,22 @@ export default function Admin() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#FAFAFA] text-[#111111] selection:bg-black/5 overflow-hidden">
+    <div className="min-h-screen flex bg-admin-bg text-admin-primary selection:bg-black/5 overflow-hidden admin-theme">
       {/* Sidebar */}
-      <aside className={`fixed lg:static inset-y-0 left-0 z-50 flex flex-col w-72 border-r border-black/5 bg-[#FAFAFA] transition-all duration-500 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-24'}`}>
-        <div className="p-6 border-b border-black/5 flex items-center justify-between">
+      <aside className={`fixed lg:static inset-y-0 left-0 z-50 flex flex-col w-72 border-r border-admin-border bg-admin-bg transition-all duration-500 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-24'}`}>
+        <div className="p-6 border-b border-admin-border flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-black flex items-center justify-center shadow-lg shadow-black/10 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-admin-btn flex items-center justify-center shadow-lg shadow-black/10 shrink-0">
               <Smartphone className="w-5 h-5 text-white" />
             </div>
             {isSidebarOpen && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <span className="font-heading font-medium text-lg tracking-tight text-[#111111] uppercase">Store</span>
-                <div className="text-[10px] text-[#111111]/60 font-medium tracking-wider uppercase">Control Panel</div>
+                <span className="font-heading font-medium text-lg tracking-tight text-admin-title uppercase">Store</span>
+                <div className="text-[10px] text-admin-secondary font-medium tracking-wider uppercase">Control Panel</div>
               </motion.div>
             )}
           </Link>
-          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="lg:hidden text-[#111111]"><X className="w-6 h-6" /></button>
+          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="lg:hidden text-admin-primary"><X className="w-6 h-6" /></button>
         </div>
 
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto custom-scrollbar">
@@ -90,8 +90,8 @@ export default function Admin() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-300 ${activeTab === tab.id
-                ? "bg-primary text-background shadow-lg shadow-primary/20 scale-105"
-                : "text-muted-foreground hover:text-white hover:bg-white/5"
+                ? "bg-admin-btn text-white shadow-lg shadow-black/10 scale-105"
+                : "text-admin-secondary hover:text-admin-primary hover:bg-admin-border/50"
                 }`}
             >
               <tab.icon className="w-4 h-4 shrink-0" />
@@ -100,7 +100,7 @@ export default function Admin() {
           ))}
         </nav>
 
-        <div className="p-4 border-t border-white/5">
+        <div className="p-4 border-t border-admin-border">
           <button onClick={handleLogout} className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-xs font-bold text-rose-500 bg-rose-500/5 hover:bg-rose-500/10 border border-rose-500/10 transition-all duration-300 ${!isSidebarOpen && 'justify-center'}`}>
             <LogOut className="w-4 h-4" />
             {isSidebarOpen && "Déconnexion"}
@@ -111,37 +111,37 @@ export default function Admin() {
       {/* Main content */}
       <main className="flex-1 min-h-screen flex flex-col relative overflow-hidden">
         {/* Header */}
-        <header className="sticky top-0 z-30 bg-[#FAFAFA]/80 backdrop-blur-md border-b border-black/5 px-8 py-5 flex items-center justify-between shrink-0">
+        <header className="sticky top-0 z-30 bg-admin-bg/80 backdrop-blur-md border-b border-admin-border px-8 py-5 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-4">
-            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 lg:hidden text-[#111111]"><Menu className="w-6 h-6" /></button>
+            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 lg:hidden text-admin-primary"><Menu className="w-6 h-6" /></button>
             <div>
-              <h1 className="font-heading font-light text-xl text-[#111111] uppercase tracking-[0.2em]">{tabs.find(t => t.id === activeTab)?.label}</h1>
+              <h1 className="font-heading font-light text-xl text-admin-title uppercase tracking-[0.2em]">{tabs.find(t => t.id === activeTab)?.label}</h1>
               <div className="flex items-center gap-2 mt-0.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <p className="text-[10px] text-[#111111]/40 font-medium tracking-wider uppercase">Store Management System • Secure Session</p>
+                <p className="text-[10px] text-admin-secondary font-medium tracking-wider uppercase">Store Management System • Secure Session</p>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-6">
-            <div className="hidden md:flex items-center bg-[#F2F2F2] border border-black/5 rounded-2xl px-4 py-2 hover:border-black/10 transition-all group">
-              <Search className="w-4 h-4 text-[#111111]/40 mr-3 group-hover:text-[#111111] transition-colors" />
-              <input type="text" placeholder="Recherche rapide..." className="bg-transparent text-xs outline-none text-[#111111] w-48 font-medium placeholder:font-normal" />
+            <div className="hidden md:flex items-center bg-admin-border/30 border border-admin-border rounded-2xl px-4 py-2 hover:border-admin-border/60 transition-all group">
+              <Search className="w-4 h-4 text-admin-secondary mr-3 group-hover:text-admin-primary transition-colors" />
+              <input type="text" placeholder="Recherche rapide..." className="bg-transparent text-xs outline-none text-admin-primary w-48 font-medium placeholder:text-admin-secondary/50 placeholder:font-normal" />
             </div>
 
-            <button className="relative w-11 h-11 rounded-2xl bg-white border border-black/5 flex items-center justify-center text-[#111111]/40 hover:text-[#111111] transition-all hover:scale-105 active:scale-95 group">
+            <button className="relative w-11 h-11 rounded-2xl bg-admin-card border border-admin-border flex items-center justify-center text-admin-secondary hover:text-admin-primary transition-all hover:scale-105 active:scale-95 group shadow-sm">
               <Bell className="w-5 h-5" />
-              <span className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-rose-500 border-2 border-[#FAFAFA]" />
+              <span className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-rose-500 border-2 border-admin-bg" />
               {/* Notification Pulse */}
               <span className="absolute top-3 right-3 w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping opacity-75" />
             </button>
 
-            <div className="flex items-center gap-4 pl-4 border-l border-black/5">
+            <div className="flex items-center gap-4 pl-4 border-l border-admin-border">
               <div className="text-right hidden sm:block">
-                <div className="text-xs font-medium text-[#111111] uppercase tracking-tighter">Administrateur</div>
-                <div className="text-[9px] text-[#111111]/50 font-medium uppercase">Gestionnaire</div>
+                <div className="text-xs font-medium text-admin-title uppercase tracking-tighter">Administrateur</div>
+                <div className="text-[9px] text-admin-secondary font-medium uppercase">Gestionnaire</div>
               </div>
-              <div className="w-11 h-11 rounded-2xl bg-black flex items-center justify-center text-sm font-medium text-white shadow-xl shadow-black/10 border border-black/5 hover:rotate-6 transition-all cursor-pointer">
+              <div className="w-11 h-11 rounded-2xl bg-admin-btn flex items-center justify-center text-sm font-medium text-white shadow-xl shadow-black/10 border border-admin-border hover:rotate-6 transition-all cursor-pointer">
                 AD
               </div>
             </div>
@@ -169,10 +169,10 @@ export default function Admin() {
         <motion.button
           whileHover={{ scale: 1.1, rotate: 5 }}
           whileTap={{ scale: 0.9 }}
-          className="fixed bottom-8 right-8 w-16 h-16 rounded-[2rem] bg-white text-background flex items-center justify-center shadow-2xl z-50 group border-4 border-primary/20 overflow-hidden"
+          className="fixed bottom-8 right-8 w-16 h-16 rounded-[2rem] bg-admin-card text-admin-primary flex items-center justify-center shadow-2xl z-50 group border-4 border-admin-border overflow-hidden"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-white via-primary/5 to-white" />
-          <Zap className="w-8 h-8 relative z-10 text-background group-hover:animate-bounce" />
+          <div className="absolute inset-0 bg-gradient-to-br from-white via-black/5 to-white" />
+          <Zap className="w-8 h-8 relative z-10 text-admin-btn group-hover:animate-bounce" />
           {/* Reflection Effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
         </motion.button>

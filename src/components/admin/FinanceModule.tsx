@@ -60,7 +60,7 @@ export function FinanceModule() {
     };
 
     if (loading) {
-        return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
+        return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-admin-border border-t-admin-btn rounded-full animate-spin" /></div>;
     }
 
     const p = pnl || { revenue: 0, expenses: 0, net_profit: 0, by_category: [] };
@@ -68,11 +68,11 @@ export function FinanceModule() {
     return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
             <div className="flex justify-between items-center">
-                <h3 className="text-lg font-heading font-bold text-white uppercase tracking-widest">Rapports Financiers (30 jours)</h3>
+                <h3 className="text-lg font-heading font-bold text-admin-title uppercase tracking-widest">Rapports Financiers</h3>
                 <div className="flex gap-3">
                     <ExportButtons onExportPDF={handleExportPDF} />
                     <button onClick={() => setShowAddForm(!showAddForm)}
-                        className="bg-primary text-background px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:scale-105 transition-all">
+                        className="bg-admin-btn text-white px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:scale-105 transition-all shadow-lg shadow-black/10">
                         <Plus className="w-4 h-4" /> Écriture
                     </button>
                 </div>
@@ -86,13 +86,13 @@ export function FinanceModule() {
 
             {showAddForm && (
                 <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
-                    className="glass-card rounded-3xl p-6 border-white/5 space-y-4">
-                    <h4 className="text-sm font-bold text-white uppercase tracking-widest">Nouvelle Écriture</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div className="space-y-1">
-                            <label className="text-[10px] text-muted-foreground uppercase font-bold">Type</label>
+                    className="bg-admin-card rounded-[2rem] p-8 border border-admin-border space-y-6 shadow-sm">
+                    <h4 className="text-sm font-bold text-admin-title uppercase tracking-widest">Nouvelle Écriture</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] text-admin-secondary uppercase font-bold tracking-widest">Type</label>
                             <select value={newEntry.type} onChange={(e) => setNewEntry({ ...newEntry, type: e.target.value as FinanceType })}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-3 text-sm text-white outline-none">
+                                className="w-full bg-admin-bg border border-admin-border rounded-xl py-3 px-4 text-sm text-admin-primary outline-none focus:border-admin-secondary/40 transition-all">
                                 <option value="expense">Dépense</option>
                                 <option value="revenue">Revenu</option>
                                 <option value="purchase">Achat</option>
@@ -100,23 +100,23 @@ export function FinanceModule() {
                                 <option value="other">Autre</option>
                             </select>
                         </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] text-muted-foreground uppercase font-bold">Montant (DA)</label>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] text-admin-secondary uppercase font-bold tracking-widest">Montant (DA)</label>
                             <input type="number" value={newEntry.amount || ''} onChange={(e) => setNewEntry({ ...newEntry, amount: Number(e.target.value) })}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-primary/50" />
+                                className="w-full bg-admin-bg border border-admin-border rounded-xl py-3 px-4 text-sm text-admin-primary outline-none focus:border-admin-secondary/40 transition-all" />
                         </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] text-muted-foreground uppercase font-bold">Catégorie</label>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] text-admin-secondary uppercase font-bold tracking-widest">Catégorie</label>
                             <input type="text" value={newEntry.category || ''} onChange={(e) => setNewEntry({ ...newEntry, category: e.target.value })}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-primary/50" />
+                                className="w-full bg-admin-bg border border-admin-border rounded-xl py-3 px-4 text-sm text-admin-primary outline-none focus:border-admin-secondary/40 transition-all" />
                         </div>
-                        <div className="space-y-1">
-                            <label className="text-[10px] text-muted-foreground uppercase font-bold">Description</label>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] text-admin-secondary uppercase font-bold tracking-widest">Description</label>
                             <input type="text" value={newEntry.description || ''} onChange={(e) => setNewEntry({ ...newEntry, description: e.target.value })}
-                                className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-3 text-sm text-white outline-none focus:border-primary/50" />
+                                className="w-full bg-admin-bg border border-admin-border rounded-xl py-3 px-4 text-sm text-admin-primary outline-none focus:border-admin-secondary/40 transition-all" />
                         </div>
                     </div>
-                    <button onClick={handleAddEntry} className="bg-primary text-background px-8 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all">
+                    <button onClick={handleAddEntry} className="bg-admin-btn text-white px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-black/10">
                         Enregistrer
                     </button>
                 </motion.div>
@@ -124,36 +124,43 @@ export function FinanceModule() {
 
             <div className="grid lg:grid-cols-2 gap-8">
                 {/* Cash Flow Chart */}
-                <div className="glass-card rounded-[2rem] p-8 border-white/5">
-                    <h3 className="text-lg font-heading font-bold text-white uppercase tracking-widest mb-8">Flux de Trésorerie</h3>
-                    <div className="h-[280px]">
+                <div className="bg-admin-card rounded-[2.5rem] p-8 border border-admin-border shadow-sm">
+                    <h3 className="text-lg font-heading font-bold text-admin-title uppercase tracking-widest mb-8">Flux de Trésorerie</h3>
+                    <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={cashFlow}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
-                                <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10 }}
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EDEDED" />
+                                <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#737373', fontSize: 10, fontWeight: 600 }}
                                     tickFormatter={(v) => v.split('-').slice(1).join('/')} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10 }}
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#737373', fontSize: 10, fontWeight: 600 }}
                                     tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
-                                <Tooltip contentStyle={{ background: '#0F0F1A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px' }} />
-                                <Area type="monotone" dataKey="inflow" stroke="#22c55e" fill="rgba(34,197,94,0.1)" strokeWidth={2} name="Entrées" />
-                                <Area type="monotone" dataKey="outflow" stroke="#ef4444" fill="rgba(239,68,68,0.1)" strokeWidth={2} name="Sorties" />
+                                <Tooltip
+                                    contentStyle={{ background: '#FFFFFF', border: '1px solid #EDEDED', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}
+                                    itemStyle={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase' }}
+                                />
+                                <Area type="monotone" dataKey="inflow" stroke="#10b981" fill="rgba(16,185,129,0.05)" strokeWidth={3} name="Entrées" />
+                                <Area type="monotone" dataKey="outflow" stroke="#f43f5e" fill="rgba(244,63,94,0.05)" strokeWidth={3} name="Sorties" />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
 
                 {/* P&L by Category */}
-                <div className="glass-card rounded-[2rem] p-8 border-white/5">
-                    <h3 className="text-lg font-heading font-bold text-white uppercase tracking-widest mb-8">P&L par Catégorie</h3>
-                    <div className="h-[280px]">
+                <div className="bg-admin-card rounded-[2.5rem] p-8 border border-admin-border shadow-sm">
+                    <h3 className="text-lg font-heading font-bold text-admin-title uppercase tracking-widest mb-8">P&L par Catégorie</h3>
+                    <div className="h-[300px]">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={p.by_category}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.03)" />
-                                <XAxis dataKey="category" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10 }} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10 }}
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EDEDED" />
+                                <XAxis dataKey="category" axisLine={false} tickLine={false} tick={{ fill: '#737373', fontSize: 10, fontWeight: 600 }} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fill: '#737373', fontSize: 10, fontWeight: 600 }}
                                     tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
-                                <Tooltip contentStyle={{ background: '#0F0F1A', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px' }} />
-                                <Bar dataKey="amount" fill="#94A3B8" radius={[8, 8, 0, 0]} />
+                                <Tooltip
+                                    cursor={{ fill: '#F5F5F5', radius: 4 }}
+                                    contentStyle={{ background: '#FFFFFF', border: '1px solid #EDEDED', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}
+                                    itemStyle={{ fontSize: '10px', fontWeight: 'bold', textTransform: 'uppercase' }}
+                                />
+                                <Bar dataKey="amount" fill="#111111" radius={[8, 8, 0, 0]} barSize={40} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
@@ -161,31 +168,31 @@ export function FinanceModule() {
             </div>
 
             {/* Recent Entries */}
-            <div className="glass-card rounded-[2.5rem] overflow-hidden border-white/5">
-                <div className="p-6 border-b border-white/5">
-                    <h3 className="text-lg font-heading font-bold text-white uppercase tracking-widest">Écritures Récentes</h3>
+            <div className="bg-admin-card rounded-[2.5rem] overflow-hidden border border-admin-border shadow-sm">
+                <div className="p-6 border-b border-admin-border bg-admin-bg/50">
+                    <h3 className="text-lg font-heading font-bold text-admin-title uppercase tracking-widest">Écritures Récentes</h3>
                 </div>
                 <div className="overflow-x-auto custom-scrollbar">
                     <table className="w-full">
                         <thead>
-                            <tr className="bg-white/[0.03] border-b border-white/5">
-                                <th className="text-left px-6 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Date</th>
-                                <th className="text-left px-6 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Type</th>
-                                <th className="text-left px-6 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Catégorie</th>
-                                <th className="text-left px-6 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Montant</th>
-                                <th className="text-left px-6 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Description</th>
+                            <tr className="bg-admin-bg/30 border-b border-admin-border">
+                                <th className="text-left px-6 py-5 text-[10px] font-bold text-admin-secondary uppercase tracking-widest">Date</th>
+                                <th className="text-left px-6 py-5 text-[10px] font-bold text-admin-secondary uppercase tracking-widest">Type</th>
+                                <th className="text-left px-6 py-5 text-[10px] font-bold text-admin-secondary uppercase tracking-widest">Catégorie</th>
+                                <th className="text-left px-6 py-5 text-[10px] font-bold text-admin-secondary uppercase tracking-widest">Montant</th>
+                                <th className="text-left px-6 py-5 text-[10px] font-bold text-admin-secondary uppercase tracking-widest">Description</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-admin-border">
                             {entries.slice(0, 20).map(e => (
-                                <tr key={e.id} className="hover:bg-white/[0.01] transition-colors">
-                                    <td className="px-6 py-3 text-[10px] text-muted-foreground font-mono-tech">{new Date(e.date).toLocaleDateString('fr-FR')}</td>
-                                    <td className="px-6 py-3"><span className={`text-[9px] font-bold uppercase tracking-widest ${e.type === 'revenue' ? 'text-emerald-500' : 'text-red-400'}`}>{e.type}</span></td>
-                                    <td className="px-6 py-3 text-xs text-white">{e.category || '—'}</td>
-                                    <td className="px-6 py-3"><span className={`text-sm font-mono-tech font-bold ${e.type === 'revenue' ? 'text-emerald-500' : 'text-red-400'}`}>
+                                <tr key={e.id} className="hover:bg-admin-bg/50 transition-colors">
+                                    <td className="px-6 py-4 text-[10px] text-admin-secondary font-mono-tech font-bold">{new Date(e.date).toLocaleDateString('fr-FR')}</td>
+                                    <td className="px-6 py-4"><span className={`text-[9px] font-bold uppercase tracking-widest ${e.type === 'revenue' ? 'text-emerald-600' : 'text-rose-600'}`}>{e.type}</span></td>
+                                    <td className="px-6 py-4 text-xs font-bold text-admin-title uppercase tracking-tight">{e.category || '—'}</td>
+                                    <td className="px-6 py-4"><span className={`text-sm font-mono-tech font-bold ${e.type === 'revenue' ? 'text-emerald-600' : 'text-rose-600'}`}>
                                         {e.type === 'revenue' ? '+' : '-'}{Number(e.amount).toLocaleString()} DA
                                     </span></td>
-                                    <td className="px-6 py-3 text-[10px] text-muted-foreground">{e.description || '—'}</td>
+                                    <td className="px-6 py-4 text-[10px] text-admin-secondary font-medium uppercase tracking-tight">{e.description || '—'}</td>
                                 </tr>
                             ))}
                         </tbody>

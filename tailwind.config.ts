@@ -83,6 +83,16 @@ export default {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        admin: {
+          bg: "var(--admin-bg)",
+          primary: "var(--admin-text-primary)",
+          secondary: "var(--admin-text-secondary)",
+          title: "var(--admin-text-title)",
+          card: "var(--admin-card-bg)",
+          border: "var(--admin-card-border)",
+          btn: "var(--admin-btn-primary)",
+          "btn-hover": "var(--admin-btn-hover)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

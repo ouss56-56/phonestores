@@ -36,7 +36,7 @@ export function InventoryModule() {
     };
 
     if (loading) {
-        return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-black/10 border-t-black rounded-full animate-spin" /></div>;
+        return <div className="flex items-center justify-center h-64"><div className="w-8 h-8 border-2 border-admin-border border-t-admin-btn rounded-full animate-spin" /></div>;
     }
 
     const totalIn = movements.filter(m => m.change > 0).reduce((sum, m) => sum + m.change, 0);
@@ -52,9 +52,9 @@ export function InventoryModule() {
             </div>
 
             <div className="flex justify-between items-center">
-                <h3 className="text-lg font-heading font-bold text-white uppercase tracking-widest">Gestion des Stocks</h3>
+                <h3 className="text-lg font-heading font-bold text-admin-title uppercase tracking-widest">Gestion des Stocks</h3>
                 <button onClick={handleCreateSnapshot}
-                    className="bg-primary text-background px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-xl shadow-primary/20">
+                    className="bg-admin-btn text-white px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-black/10">
                     Créer un Snapshot
                 </button>
             </div>
@@ -62,18 +62,18 @@ export function InventoryModule() {
             {/* Low Stock Alert */}
             {lowStock.length > 0 && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                    className="bg-red-500/5 border border-red-500/20 rounded-3xl p-6">
-                    <h4 className="text-sm font-bold text-red-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                    className="bg-rose-50 border border-rose-100 rounded-3xl p-6">
+                    <h4 className="text-sm font-bold text-rose-600 uppercase tracking-widest mb-6 flex items-center gap-2">
                         <Zap className="w-4 h-4 animate-pulse" /> Produits en Stock Critique ({lowStock.length})
                     </h4>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {lowStock.slice(0, 6).map(p => (
-                            <div key={p.id} className="bg-black/5 rounded-xl p-3 flex justify-between items-center">
+                            <div key={p.id} className="bg-white border border-rose-100 rounded-xl p-4 flex justify-between items-center shadow-sm">
                                 <div>
-                                    <div className="text-xs font-bold text-white">{p.name}</div>
-                                    <div className="text-[10px] text-muted-foreground">{p.brand}</div>
+                                    <div className="text-xs font-bold text-admin-title">{p.name}</div>
+                                    <div className="text-[10px] text-admin-secondary font-bold uppercase tracking-widest mt-1">{p.brand}</div>
                                 </div>
-                                <div className="text-lg font-mono-tech font-bold text-red-400">{p.quantity}</div>
+                                <div className="text-xl font-mono-tech font-bold text-rose-500">{p.quantity}</div>
                             </div>
                         ))}
                     </div>
@@ -81,42 +81,42 @@ export function InventoryModule() {
             )}
 
             {/* Stock Movements Log */}
-            <div className="glass-card rounded-[2.5rem] overflow-hidden border-white/5">
-                <div className="p-6 border-b border-white/5">
-                    <h3 className="text-lg font-heading font-bold text-white uppercase tracking-widest">Journal des Mouvements</h3>
+            <div className="bg-admin-card rounded-[2.5rem] overflow-hidden border border-admin-border shadow-sm">
+                <div className="p-6 border-b border-admin-border bg-admin-bg/50">
+                    <h3 className="text-lg font-heading font-bold text-admin-title uppercase tracking-widest">Journal des Mouvements</h3>
                 </div>
                 <div className="overflow-x-auto custom-scrollbar">
                     <table className="w-full">
                         <thead>
-                            <tr className="bg-white/[0.03] border-b border-white/5">
-                                <th className="text-left px-6 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Date</th>
-                                <th className="text-left px-6 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Type</th>
-                                <th className="text-left px-6 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Changement</th>
-                                <th className="text-left px-6 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Référence</th>
-                                <th className="text-left px-6 py-4 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Note</th>
+                            <tr className="bg-admin-bg/30 border-b border-admin-border">
+                                <th className="text-left px-6 py-5 text-[10px] font-bold text-admin-secondary uppercase tracking-widest">Date</th>
+                                <th className="text-left px-6 py-5 text-[10px] font-bold text-admin-secondary uppercase tracking-widest">Type</th>
+                                <th className="text-left px-6 py-5 text-[10px] font-bold text-admin-secondary uppercase tracking-widest">Changement</th>
+                                <th className="text-left px-6 py-5 text-[10px] font-bold text-admin-secondary uppercase tracking-widest">Référence</th>
+                                <th className="text-left px-6 py-5 text-[10px] font-bold text-admin-secondary uppercase tracking-widest">Note</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-admin-border">
                             {movements.map(m => (
-                                <tr key={m.id} className="hover:bg-white/[0.01] transition-colors">
-                                    <td className="px-6 py-3">
-                                        <span className="text-[10px] text-muted-foreground font-mono-tech">
+                                <tr key={m.id} className="hover:bg-admin-bg/50 transition-colors">
+                                    <td className="px-6 py-4">
+                                        <span className="text-[10px] text-admin-secondary font-mono-tech font-bold">
                                             {new Date(m.created_at).toLocaleString('fr-FR')}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-3">
+                                    <td className="px-6 py-4">
                                         <StatusBadge status={m.type} />
                                     </td>
-                                    <td className="px-6 py-3">
-                                        <span className={`text-sm font-mono-tech font-bold ${m.change > 0 ? 'text-emerald-500' : 'text-red-400'}`}>
+                                    <td className="px-6 py-4">
+                                        <span className={`text-sm font-mono-tech font-bold ${m.change > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
                                             {m.change > 0 ? '+' : ''}{m.change}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-3">
-                                        <span className="text-[10px] text-muted-foreground font-mono-tech">{m.reference_id || '—'}</span>
+                                    <td className="px-6 py-4">
+                                        <span className="text-[10px] text-admin-secondary font-mono-tech font-bold">{m.reference_id || '—'}</span>
                                     </td>
-                                    <td className="px-6 py-3">
-                                        <span className="text-[10px] text-muted-foreground">{m.note || '—'}</span>
+                                    <td className="px-6 py-4">
+                                        <span className="text-[10px] text-admin-secondary font-medium uppercase tracking-tight">{m.note || '—'}</span>
                                     </td>
                                 </tr>
                             ))}
