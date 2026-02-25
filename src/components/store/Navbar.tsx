@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Search, Heart, Menu, X, Smartphone, Globe } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useI18n } from "@/lib/i18n";
@@ -21,6 +21,7 @@ export default function Navbar() {
   const searchRef = useRef<HTMLDivElement>(null);
   const searchTimeout = useRef<ReturnType<typeof setTimeout>>();
   const location = useLocation();
+  const navigate = useNavigate();
   const { getTotalItems, setIsOpen } = useCartStore();
   const totalItems = getTotalItems();
   const { count: wishlistCount } = useWishlist();
@@ -163,8 +164,7 @@ export default function Navbar() {
                                 onClick={() => {
                                   setSearchOpen(false);
                                   setSearchQuery("");
-                                  // Scroll to featured section
-                                  document.getElementById('featured')?.scrollIntoView({ behavior: 'smooth' });
+                                  navigate(`/product/${product.id}`);
                                 }}
                               >
                                 <div className="w-10 h-10 rounded-lg bg-[#F2F2F2] flex-shrink-0 overflow-hidden">

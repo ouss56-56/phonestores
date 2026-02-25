@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Heart, Eye, Plus, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { storeApi, StoreProduct } from "@/services/storeApi";
 import { useCartStore } from "@/stores/cartStore";
+import { useNavigate, Link } from "react-router-dom";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useI18n } from "@/lib/i18n";
 import { cartBusiness } from "@/business/cartBusiness";
@@ -12,6 +13,8 @@ import MagneticButton from "@/components/ui/MagneticButton";
 
 interface FeaturedCollectionProps {
     onQuickView?: (product: StoreProduct) => void;
+    categoryId?: string | null;
+    onClearFilter?: () => void;
 }
 
 // Sample data for demonstration
@@ -102,18 +105,33 @@ const SAMPLE_PRODUCTS: StoreProduct[] = [
     }
 ];
 
-export default function FeaturedCollection({ onQuickView }: FeaturedCollectionProps) {
+export default function FeaturedCollection({ onQuickView, categoryId, onClearFilter }: FeaturedCollectionProps) {
     const { t } = useI18n();
     const { addItem } = useCartStore(); // Changed from useCart
     const { toggle, has } = useWishlist();
+    const [priceRange, setPriceRange] = useState<[number, number]>([0, 500000]);
+    const [onlyInStock, setOnlyInStock] = useState(false);
 
     const { data: dbProducts = [], isLoading } = useQuery({
-        queryKey: ['products', 'featured'],
-        queryFn: () => storeApi.fetchProducts({ limit: 12 }),
+        queryKey: ['products', 'featured', categoryId],
+        queryFn: () => storeApi.fetchProducts({
+            limit: 12,
+            category: categoryId || undefined,
+            featured: categoryId ? undefined : true // Show all featured by default, or specific cat if filtered
+        }),
         staleTime: 30_000,
     });
 
-    const products = dbProducts.length > 0 ? dbProducts : SAMPLE_PRODUCTS;
+    const products = useMemo(() => {
+        let list = dbProducts.length > 0 ? dbProducts : SAMPLE_PRODUCTS;
+
+        // Apply filters
+        return list.filter(p => {
+            const matchesPrice = p.selling_price >= priceRange[0] && p.selling_price <= priceRange[1];
+            const matchesStock = onlyInStock ? p.quantity > 0 : true;
+            return matchesPrice && matchesStock;
+        });
+    }, [dbProducts, priceRange, onlyInStock]);
 
     const formatPrice = (price: number) =>
         new Intl.NumberFormat("fr-DZ").format(price) + " DA";
@@ -157,10 +175,49 @@ export default function FeaturedCollection({ onQuickView }: FeaturedCollectionPr
                     className="text-center mb-16"
                 >
                     <h2 className="text-[clamp(1.75rem,4vw,2.75rem)] font-light tracking-tight text-[#111] mb-3 animate-spiral-in">
-                        {t('featured.title')}
+                        {categoryId ? t('nav.products') : t('featured.title')}
                     </h2>
-                    <p className="text-[#111]/35 text-base font-light">
-                        {t('featured.subtitle')}
+
+                    {/* Filter Bar */}
+                    <div className="flex flex-wrap items-center justify-center gap-6 mb-12">
+                        <div className="flex items-center gap-3">
+                            <span className="text-[10px] uppercase font-bold tracking-widest text-[#111]/30">Prix max:</span>
+                            <input
+                                type="range"
+                                min="0"
+                                max="500000"
+                                step="10000"
+                                value={priceRange[1]}
+                                onChange={(e) => setPriceRange([0, parseInt(e.target.value)])}
+                                className="w-32 accent-[#111]"
+                            />
+                            <span className="text-[11px] font-medium min-w-[80px]">{formatPrice(priceRange[1])}</span>
+                        </div>
+
+                        <label className="flex items-center gap-2 cursor-pointer group">
+                            <input
+                                type="checkbox"
+                                checked={onlyInStock}
+                                onChange={(e) => setOnlyInStock(e.target.checked)}
+                                className="w-4 h-4 accent-[#111]"
+                            />
+                            <span className="text-[10px] uppercase font-bold tracking-widest text-[#111]/30 group-hover:text-[#111] transition-colors">
+                                En Stock Uniquement
+                            </span>
+                        </label>
+
+                        {categoryId && (
+                            <button
+                                onClick={onClearFilter}
+                                className="text-[10px] font-bold uppercase tracking-widest text-rose-500 hover:text-rose-600 transition-colors"
+                            >
+                                Effacer la catégorie
+                            </button>
+                        )}
+                    </div>
+
+                    <p className="text-[#111]/35 text-[11px] font-bold uppercase tracking-widest mb-6">
+                        {products.length} {products.length > 1 ? 'produits' : 'produit'}
                     </p>
                 </motion.div>
 
@@ -188,25 +245,25 @@ export default function FeaturedCollection({ onQuickView }: FeaturedCollectionPr
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true, margin: "-30px" }}
                                     transition={{ duration: 0.5, delay: (index % 4) * 0.08, ease: [0.22, 0.9, 0.3, 1] }}
-                                    className="group relative bg-white rounded-2xl border border-black/[0.03] overflow-hidden product-card"
                                 >
-                                    {/* Image */}
                                     <div className="relative aspect-square overflow-hidden bg-[#F8F8F8] ambient-sheen">
-                                        {product.image_url ? (
-                                            <img
-                                                src={product.image_url}
-                                                alt={product.name}
-                                                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                                                loading="lazy"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-[#111]/10">
-                                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-                                                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
-                                                    <line x1="12" y1="18" x2="12.01" y2="18" />
-                                                </svg>
-                                            </div>
-                                        )}
+                                        <Link to={`/product/${product.id}`} className="block w-full h-full">
+                                            {product.image_url ? (
+                                                <img
+                                                    src={product.image_url}
+                                                    alt={product.name}
+                                                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                                    loading="lazy"
+                                                />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-[#111]/10">
+                                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                                                        <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                                                        <line x1="12" y1="18" x2="12.01" y2="18" />
+                                                    </svg>
+                                                </div>
+                                            )}
+                                        </Link>
 
                                         {/* Badges */}
                                         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
@@ -269,9 +326,11 @@ export default function FeaturedCollection({ onQuickView }: FeaturedCollectionPr
                                         <p className="text-[11px] text-[#111]/30 font-medium uppercase tracking-wider mb-1">
                                             {product.brand}
                                         </p>
-                                        <h3 className="font-medium text-sm text-[#111] mb-2 line-clamp-1">
-                                            {product.name}
-                                        </h3>
+                                        <Link to={`/product/${product.id}`}>
+                                            <h3 className="font-medium text-sm text-[#111] mb-2 line-clamp-1 hover:text-[#111]/60 transition-colors">
+                                                {product.name}
+                                            </h3>
+                                        </Link>
                                         <div className="flex items-center justify-between">
                                             <div className="price-reveal-container">
                                                 <span className="text-base font-semibold text-[#111] price-reveal-text">

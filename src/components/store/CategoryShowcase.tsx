@@ -36,7 +36,12 @@ function getImage(category: StoreCategory) {
     return categoryImages[key] || categoryImages.phone;
 }
 
-export default function CategoryShowcase() {
+interface CategoryShowcaseProps {
+    onCategorySelect?: (categoryId: string | null) => void;
+    selectedCategoryId?: string | null;
+}
+
+export default function CategoryShowcase({ onCategorySelect, selectedCategoryId }: CategoryShowcaseProps) {
     const { t } = useI18n();
 
     const { data: categories = [], isLoading } = useQuery({
@@ -87,7 +92,11 @@ export default function CategoryShowcase() {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true, margin: "-40px" }}
                                     transition={{ duration: 0.6, delay: index * 0.1, ease: [0.22, 0.9, 0.3, 1] }}
-                                    className="group relative overflow-hidden rounded-2xl bg-white border border-black/[0.04] cursor-pointer"
+                                    onClick={() => onCategorySelect?.(category.id)}
+                                    className={`group relative overflow-hidden rounded-2xl bg-white border cursor-pointer transition-all duration-300 ${selectedCategoryId === category.id
+                                            ? "border-admin-btn ring-2 ring-admin-btn/20 scale-[1.02]"
+                                            : "border-black/[0.04] hover:border-black/10"
+                                        }`}
                                     style={{ minHeight: 280 }}
                                 >
                                     {/* Image */}

@@ -194,8 +194,15 @@ export default function OrderConfirmation() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5 }}
-                    className="text-center"
+                    className="flex flex-col sm:flex-row items-center justify-center gap-4"
                 >
+                    <Link
+                        to={`/track-order?nr=${order.order_number}`}
+                        className="inline-flex items-center gap-2 bg-[#111] text-white px-8 py-3 rounded-xl text-sm font-heading font-semibold hover:bg-[#222] transition-colors"
+                    >
+                        <Package className="w-4 h-4" />
+                        Suivre ma Commande
+                    </Link>
                     <Link
                         to="/"
                         className="inline-flex items-center gap-2 btn-cyber px-8 py-3 rounded-xl text-sm font-heading font-semibold"

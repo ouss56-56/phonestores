@@ -11,6 +11,8 @@ export function OrdersModule() {
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
+    const [statusLogs, setStatusLogs] = useState<any[]>([]);
+    const [loadingLogs, setLoadingLogs] = useState(false);
 
     const fetchOrders = async () => {
         try {
@@ -36,6 +38,7 @@ export function OrdersModule() {
             if (selectedOrder?.id === orderId) {
                 const updated = await salesService.getOrderById(orderId);
                 setSelectedOrder(updated);
+                fetchStatusLogs(orderId);
             }
         } catch (e: any) {
             toast.error(e.message || "Erreur");
@@ -226,6 +229,41 @@ export function OrdersModule() {
                                                 </div>
                                             </div>
                                         ))}
+                                    </div>
+                                </div>
+
+                                {/* Status History Timeline */}
+                                <div className="pt-6 border-t border-admin-border">
+                                    <p className="text-[10px] font-bold text-admin-secondary uppercase tracking-widest mb-6 px-1">Historique des statuts</p>
+                                    <div className="relative space-y-6 before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-admin-border px-1">
+                                        {loadingLogs ? (
+                                            <div className="flex items-center gap-3 pl-8">
+                                                <div className="w-3 h-3 border-2 border-admin-border border-t-admin-btn rounded-full animate-spin" />
+                                                <span className="text-xs text-admin-secondary italic">Chargement...</span>
+                                            </div>
+                                        ) : statusLogs.length > 0 ? (
+                                            statusLogs.map((log, idx) => (
+                                                <div key={log.id} className="relative pl-8">
+                                                    <div className={`absolute left-0 top-1.5 w-3 h-3 rounded-full border-2 border-white shadow-sm ${idx === 0 ? "bg-admin-btn" : "bg-admin-secondary/30"
+                                                        }`} />
+                                                    <div className="flex flex-col">
+                                                        <div className="flex items-center justify-between gap-4">
+                                                            <span className={`text-[11px] font-bold uppercase tracking-tight ${idx === 0 ? "text-admin-title" : "text-admin-secondary"}`}>
+                                                                {log.new_status}
+                                                            </span>
+                                                            <span className="text-[10px] text-admin-secondary font-mono-tech">
+                                                                {new Date(log.created_at).toLocaleString('fr-FR')}
+                                                            </span>
+                                                        </div>
+                                                        {log.note && (
+                                                            <p className="text-[11px] text-admin-secondary/70 italic mt-0.5">"{log.note}"</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="relative pl-8 text-xs text-admin-secondary italic">Aucun historique disponible</div>
+                                        )}
                                     </div>
                                 </div>
 

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ShoppingCart, Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { storeApi } from "@/services/storeApi";
+import { Link } from "react-router-dom";
 import { useCartStore } from "@/stores/cartStore";
 import { useI18n } from "@/lib/i18n";
 
@@ -123,12 +124,14 @@ export default function ProductHighlight() {
                             </span>
                         </div>
 
-                        <h2
-                            className="text-[clamp(2rem,4vw,3rem)] font-light tracking-tight mb-2 transition-colors"
-                            style={{ color: tint.text, transitionDuration: "800ms" }}
-                        >
-                            {product.name}
-                        </h2>
+                        <Link to={`/product/${product.id}`}>
+                            <h2
+                                className="text-[clamp(2rem,4vw,3rem)] font-light tracking-tight mb-2 transition-colors hover:opacity-70"
+                                style={{ color: tint.text, transitionDuration: "800ms" }}
+                            >
+                                {product.name}
+                            </h2>
+                        </Link>
 
                         <p className="text-[11px] uppercase tracking-widest font-medium mb-4" style={{ color: tint.text, opacity: 0.4 }}>
                             {product.brand}
@@ -194,23 +197,31 @@ export default function ProductHighlight() {
                         )}
 
                         {/* Add to Cart */}
-                        <button
-                            onClick={() => {
-                                addItem({
-                                    id: product.id,
-                                    name: product.name,
-                                    brand: product.brand,
-                                    price: product.selling_price,
-                                    image_url: product.image_url,
-                                    color: activeColor || product.color,
-                                    storage_capacity: product.storage_capacity,
-                                });
-                            }}
-                            className="ps-btn-primary flex items-center gap-2"
-                        >
-                            <ShoppingCart style={{ width: 16, height: 16 }} />
-                            {t('highlight.addToCart')}
-                        </button>
+                        <div className="flex gap-4">
+                            <button
+                                onClick={() => {
+                                    addItem({
+                                        id: product.id,
+                                        name: product.name,
+                                        brand: product.brand,
+                                        price: product.selling_price,
+                                        image_url: product.image_url,
+                                        color: activeColor || product.color,
+                                        storage_capacity: product.storage_capacity,
+                                    });
+                                }}
+                                className="ps-btn-primary flex items-center gap-2"
+                            >
+                                <ShoppingCart style={{ width: 16, height: 16 }} />
+                                {t('highlight.addToCart')}
+                            </button>
+                            <Link
+                                to={`/product/${product.id}`}
+                                className="ps-btn-secondary px-8 flex items-center justify-center text-[11px] font-bold uppercase tracking-widest border border-black/10 hover:border-black/30 rounded-full transition-all"
+                            >
+                                En savoir plus
+                            </Link>
+                        </div>
                     </motion.div>
                 </div>
             </div>

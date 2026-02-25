@@ -50,9 +50,15 @@ export default function Footer() {
               <ul className="space-y-2.5">
                 {links.map((link) => (
                   <li key={link}>
-                    <a href="#" className="text-xs text-[#111]/30 hover:text-[#111] transition-colors duration-200">
-                      {link}
-                    </a>
+                    {link === "Suivi Commande" ? (
+                      <a href="/track-order" className="text-xs text-[#111]/30 hover:text-[#111] transition-colors duration-200">
+                        {link}
+                      </a>
+                    ) : (
+                      <a href="#" className="text-xs text-[#111]/30 hover:text-[#111] transition-colors duration-200">
+                        {link}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

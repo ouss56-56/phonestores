@@ -13,6 +13,8 @@ import Admin from "./pages/Admin";
 import AdminLogin from "./pages/AdminLogin";
 import Checkout from "./pages/Checkout";
 import WishlistPage from "./pages/WishlistPage";
+import ProductDetails from "./pages/ProductDetails";
+import TrackOrder from "./pages/TrackOrder";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -58,8 +60,10 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/wishlist" element={<WishlistPage />} />
+                  <Route path="/product/:id" element={<ProductDetails />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/order-confirmation/:orderNumber" element={<OrderConfirmation />} />
+                  <Route path="/track-order" element={<TrackOrder />} />
                   <Route path="/admin/login" element={<AdminLogin />} />
                   <Route path="/admin" element={<ProtectedAdminRoute><Admin /></ProtectedAdminRoute>} />
                   <Route path="*" element={<NotFound />} />

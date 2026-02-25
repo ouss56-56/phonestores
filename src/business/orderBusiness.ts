@@ -175,7 +175,48 @@ export const orderBusiness = {
 
         if (error) throw error;
 
-        // Log status change
+        // 3. Handle stock refinement for cancellations
+        // If moving TO cancelled, put stock back
+        if (newStatus === 'cancelled' && oldStatus !== 'cancelled') {
+            const { data: items } = await supabase
+                .from('order_items')
+                .select('product_id, quantity')
+                .eq('order_id', orderId);
+
+            if (items) {
+                for (const item of items) {
+                    await stockService.recordMovement({
+                        product_id: item.product_id,
+                        change: item.quantity,
+                        type: 'adjustment',
+                        reference_id: orderId,
+                        note: `Retour stock (Annulation commande #${data.order_number})`,
+                    });
+                }
+            }
+        }
+        // If moving AWAY FROM cancelled (reinstating), take stock out again
+        else if (oldStatus === 'cancelled' && newStatus !== 'cancelled') {
+            const { data: items } = await supabase
+                .from('order_items')
+                .select('product_id, quantity')
+                .eq('order_id', orderId);
+
+            if (items) {
+                // Re-validate stock first? For now just try to take it
+                for (const item of items) {
+                    await stockService.recordMovement({
+                        product_id: item.product_id,
+                        change: -item.quantity,
+                        type: 'sale',
+                        reference_id: orderId,
+                        note: `Vente (Réactivation commande #${data.order_number})`,
+                    });
+                }
+            }
+        }
+
+        // 4. Log status change
         const {
             data: { user },
         } = await supabase.auth.getUser();
