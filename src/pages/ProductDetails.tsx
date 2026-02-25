@@ -23,6 +23,9 @@ import { cartBusiness } from "@/business/cartBusiness";
 import { toast } from "@/hooks/use-toast";
 import Navbar from "@/components/store/Navbar";
 import Footer from "@/components/store/Footer";
+import ProductCard from "@/components/store/ProductCard";
+import { recommendationBusiness } from "@/business/recommendationBusiness";
+import QuickViewModal from "@/components/store/QuickViewModal";
 
 export default function ProductDetails() {
     const { id } = useParams<{ id: string }>();
@@ -39,6 +42,20 @@ export default function ProductDetails() {
         queryFn: () => storeApi.fetchProductById(id!),
         enabled: !!id,
     });
+
+    const { data: similarProducts = [] } = useQuery({
+        queryKey: ['similar-products', id],
+        queryFn: () => recommendationBusiness.getSimilarProducts(id!),
+        enabled: !!id,
+    });
+
+    const { data: boughtTogether = [] } = useQuery({
+        queryKey: ['bought-together', id],
+        queryFn: () => recommendationBusiness.getBoughtTogether(id!),
+        enabled: !!id,
+    });
+
+    const [quickViewProduct, setQuickViewProduct] = useState<StoreProduct | null>(null);
 
     // All images for the gallery
     const gallery = useMemo(() => {
@@ -306,6 +323,55 @@ export default function ProductDetails() {
                     </div>
                 </div>
             </main>
+
+            {/* Recommendations Section */}
+            <div className="bg-[#F9F9F9] py-24">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {boughtTogether.length > 0 && (
+                        <div className="mb-24">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                className="mb-12"
+                            >
+                                <h2 className="text-3xl font-light tracking-tight text-[#111] mb-2">Souvent achetés ensemble</h2>
+                                <p className="text-[#111]/40 text-[11px] font-bold uppercase tracking-widest">Complétez votre achat avec ces articles populaires</p>
+                            </motion.div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                {boughtTogether.map((p, i) => (
+                                    <ProductCard key={p.id} product={p as any} index={i} onQuickView={setQuickViewProduct} />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {similarProducts.length > 0 && (
+                        <div>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                className="mb-12"
+                            >
+                                <h2 className="text-3xl font-light tracking-tight text-[#111] mb-2">Vous pourriez aussi aimer</h2>
+                                <p className="text-[#111]/40 text-[11px] font-bold uppercase tracking-widest">Sélectionnés spécialement pour vous par Lumina AI</p>
+                            </motion.div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                {similarProducts.map((p, i) => (
+                                    <ProductCard key={p.id} product={p as any} index={i} onQuickView={setQuickViewProduct} />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <QuickViewModal
+                product={quickViewProduct}
+                isOpen={!!quickViewProduct}
+                onClose={() => setQuickViewProduct(null)}
+            />
 
             <Footer />
         </div>

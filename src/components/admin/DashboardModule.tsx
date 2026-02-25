@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
-import { Database, DollarSign, TrendingUp, Package, Zap, ShoppingBag, Wrench, ArrowUpRight } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell } from "recharts";
+import { Database, DollarSign, TrendingUp, Package, Zap, ShoppingBag, Wrench, ArrowUpRight, Calendar, PieChart as PieIcon } from "lucide-react";
 import { StatCard } from "./shared/StatCard";
 import { ExportButtons } from "./shared/ExportButtons";
 import { dashboardService } from "@/services/admin/dashboardService";
@@ -9,31 +9,38 @@ import { aiService } from "@/services/admin/aiService";
 import { exportService } from "@/services/admin/exportService";
 import type { DashboardMetrics, AIRecommendation } from "@/lib/admin-types";
 
+const COLORS = ['#111111', '#404040', '#737373', '#A3A3A3', '#D4D4D4'];
+
 export function DashboardModule() {
     const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
     const [chartData, setChartData] = useState<{ date: string; revenue: number; orders: number }[]>([]);
+    const [categoryPerf, setCategoryPerf] = useState<{ name: string; revenue: number }[]>([]);
     const [capitalDist, setCapitalDist] = useState<{ name: string; value: number }[]>([]);
     const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
+    const [chartRange, setChartRange] = useState<'30d' | '1y'>('30d');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         async function load() {
             try {
-                const [m, chart, cap, recs] = await Promise.all([
+                const [m, chart30, yearly, cap, recs, catPerf] = await Promise.all([
                     dashboardService.getMetrics(),
                     dashboardService.getSalesChart(30),
+                    dashboardService.getYearlySalesChart(),
                     dashboardService.getCapitalDistribution(),
                     aiService.getRecommendations(),
+                    dashboardService.getCategoryPerformance(),
                 ]);
                 setMetrics(m);
-                setChartData(chart);
+                setChartData(chartRange === '30d' ? chart30 : yearly);
                 setCapitalDist(cap);
                 setRecommendations(recs);
+                setCategoryPerf(catPerf);
             } catch (e) { console.error(e); }
             setLoading(false);
         }
         load();
-    }, []);
+    }, [chartRange]);
 
     const handleExportCSV = () => {
         if (!metrics) return;
@@ -108,13 +115,31 @@ export function DashboardModule() {
             <div className="grid lg:grid-cols-3 gap-8">
                 {/* Sales Chart */}
                 <div className="lg:col-span-2 rounded-[2rem] p-8 border border-admin-border bg-admin-card shadow-sm">
-                    <h3 className="text-xl font-heading font-light text-admin-title uppercase tracking-widest mb-8">Ventes (30 jours)</h3>
+                    <div className="flex justify-between items-center mb-8">
+                        <h3 className="text-xl font-heading font-light text-admin-title uppercase tracking-widest">
+                            {chartRange === '30d' ? 'Ventes (30 jours)' : 'Ventes (Annuel)'}
+                        </h3>
+                        <div className="flex bg-admin-bg/50 p-1 rounded-xl border border-admin-border/50">
+                            <button
+                                onClick={() => setChartRange('30d')}
+                                className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${chartRange === '30d' ? 'bg-white shadow-sm text-admin-primary' : 'text-admin-secondary hover:text-admin-primary'}`}
+                            >
+                                30 Jours
+                            </button>
+                            <button
+                                onClick={() => setChartRange('1y')}
+                                className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${chartRange === '1y' ? 'bg-white shadow-sm text-admin-primary' : 'text-admin-secondary hover:text-admin-primary'}`}
+                            >
+                                Année
+                            </button>
+                        </div>
+                    </div>
                     <div className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={chartData}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.03)" />
                                 <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{ fill: '#737373', opacity: 0.8, fontSize: 10 }}
-                                    tickFormatter={(v) => v.split('-').slice(1).join('/')} />
+                                    tickFormatter={(v) => chartRange === '30d' ? v.split('-').slice(1).join('/') : v} />
                                 <YAxis axisLine={false} tickLine={false} tick={{ fill: '#737373', opacity: 0.8, fontSize: 10 }}
                                     tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
                                 <Tooltip contentStyle={{ background: '#FFFFFF', border: '1px solid #EDEDED', borderRadius: '16px', boxShadow: '0 8px 30px rgba(0,0,0,0.04)' }} />
@@ -124,31 +149,46 @@ export function DashboardModule() {
                     </div>
                 </div>
 
-                {/* AI Recommendations */}
-                <div className="rounded-[2rem] p-8 border border-admin-border space-y-6 bg-admin-card shadow-sm">
-                    <div className="flex items-center gap-3">
-                        <Zap className="w-5 h-5 text-admin-title" />
-                        <h3 className="text-xl font-heading font-light text-admin-title uppercase tracking-widest">Lumina AI</h3>
+                {/* Category Performance Pie */}
+                <div className="rounded-[2rem] p-8 border border-admin-border bg-admin-card shadow-sm">
+                    <div className="flex items-center gap-3 mb-8">
+                        <PieIcon className="w-5 h-5 text-admin-title" />
+                        <h3 className="text-xl font-heading font-light text-admin-title uppercase tracking-widest">Par Catégorie</h3>
                     </div>
-                    <div className="space-y-4">
-                        {recommendations.map((rec, i) => {
-                            const color = rec.type === 'restock' ? 'amber' : rec.type === 'price_reduction' ? 'emerald' : 'blue';
-                            const colors: Record<string, string> = {
-                                amber: "bg-amber-50 border-amber-200 text-amber-600",
-                                emerald: "bg-emerald-50 border-emerald-200 text-emerald-600",
-                                blue: "bg-blue-50 border-blue-200 text-blue-600"
-                            };
-                            const c = colors[color];
-                            return (
-                                <div key={i} className={`${c.split(' ').slice(0, 2).join(' ')} border p-5 rounded-3xl group cursor-pointer hover:shadow-soft transition-all`}>
-                                    <div className={`text-[10px] font-bold ${c.split(' ')[2]} uppercase mb-1 tracking-widest`}>{rec.title}</div>
-                                    <p className="text-[11px] text-admin-secondary leading-relaxed mb-3">{rec.description}</p>
-                                    <button className={`text-[10px] font-bold ${c.split(' ')[2]} uppercase flex items-center gap-1 group-hover:gap-2 transition-all`}>
-                                        {rec.action_label} <ArrowUpRight className="w-3 h-3" />
-                                    </button>
+                    <div className="h-[240px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={categoryPerf}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={60}
+                                    outerRadius={80}
+                                    paddingAngle={5}
+                                    dataKey="revenue"
+                                    stroke="none"
+                                >
+                                    {categoryPerf.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip
+                                    formatter={(value: number) => `${value.toLocaleString()} DA`}
+                                    contentStyle={{ background: '#FFFFFF', border: '1px solid #EDEDED', borderRadius: '16px' }}
+                                />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                    <div className="mt-4 space-y-2">
+                        {categoryPerf.slice(0, 4).map((entry, i) => (
+                            <div key={i} className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+                                    <span className="text-[11px] text-admin-secondary">{entry.name}</span>
                                 </div>
-                            );
-                        })}
+                                <span className="text-[11px] font-bold text-admin-title">{Math.round((entry.revenue / categoryPerf.reduce((a, b) => a + b.revenue, 0)) * 100)}%</span>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

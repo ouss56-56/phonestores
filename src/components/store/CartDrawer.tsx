@@ -3,13 +3,38 @@ import { X, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/lib/i18n";
+import { useQuery } from "@tanstack/react-query";
+import { recommendationBusiness } from "@/business/recommendationBusiness";
+import { StoreProduct } from "@/services/storeApi";
+import { toast } from "@/hooks/use-toast";
 
 export default function CartDrawer() {
-  const { items, removeItem, updateQuantity, getTotalItems, getTotalPrice, isOpen, setIsOpen, clearCart } = useCartStore();
+  const { items, addItem, removeItem, updateQuantity, getTotalItems, getTotalPrice, isOpen, setIsOpen, clearCart } = useCartStore();
   const totalItems = getTotalItems();
   const totalPrice = getTotalPrice();
   const navigate = useNavigate();
   const { t } = useI18n();
+
+  const { data: upsells = [] } = useQuery({
+    queryKey: ['cart-upsells'],
+    queryFn: () => recommendationBusiness.getRecommendedUpsells(3),
+  });
+
+  const handleAddUpsell = (product: any) => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      brand: product.brand,
+      price: product.selling_price,
+      image_url: product.image_url,
+      color: product.color,
+      storage_capacity: product.storage_capacity,
+    });
+    toast({
+      title: "Ajouté !",
+      description: `${product.name} est dans votre panier.`,
+    });
+  };
 
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("fr-DZ").format(price) + " DA";
@@ -113,6 +138,32 @@ export default function CartDrawer() {
                     </div>
                   </motion.div>
                 ))
+              )}
+
+              {/* Upsell Section */}
+              {items.length > 0 && upsells.length > 0 && (
+                <div className="mt-8 pt-8 border-t border-black/[0.04]">
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-[#111]/40 mb-4">Complétez votre achat</h3>
+                  <div className="space-y-3">
+                    {upsells.map((p) => (
+                      <div key={p.id} className="flex items-center gap-3 p-2 rounded-xl border border-black/[0.03] bg-white group hover:border-[#111]/20 transition-all">
+                        <div className="w-12 h-12 rounded-lg bg-[#F8F8F8] flex items-center justify-center overflow-hidden">
+                          <img src={p.image_url || ""} alt={p.name} className="w-full h-full object-contain p-1" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-[11px] font-medium text-[#111] truncate">{p.name}</h4>
+                          <p className="text-[10px] text-[#111]/40">{formatPrice(p.selling_price)}</p>
+                        </div>
+                        <button
+                          onClick={() => handleAddUpsell(p)}
+                          className="w-8 h-8 rounded-full bg-[#111]/5 flex items-center justify-center text-[#111] hover:bg-[#111] hover:text-white transition-all transform active:scale-95"
+                        >
+                          <Plus style={{ width: 14, height: 14 }} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
 

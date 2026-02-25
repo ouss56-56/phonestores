@@ -109,5 +109,59 @@ export const dashboardService = {
         });
 
         return Object.entries(dist).map(([name, value]) => ({ name, value }));
+    },
+
+    /**
+     * Get revenue distribution by category
+     */
+    async getCategoryPerformance(): Promise<{ name: string; revenue: number }[]> {
+        const { data: salesData } = await supabase
+            .from('order_items')
+            .select('quantity, unit_price, products(category_id, categories(name))')
+            .not('products', 'is', null);
+
+        if (!salesData) return [];
+
+        const perf: Record<string, number> = {};
+        salesData.forEach((item: any) => {
+            const catName = item.products?.categories?.name || 'Inconnu';
+            const revenue = Number(item.quantity) * Number(item.unit_price);
+            perf[catName] = (perf[catName] || 0) + revenue;
+        });
+
+        return Object.entries(perf).map(([name, revenue]) => ({ name, revenue }));
+    },
+
+    /**
+     * Get monthly sales for the current year
+     */
+    async getYearlySalesChart() {
+        const yearStart = new Date(new Date().getFullYear(), 0, 1).toISOString();
+
+        const { data } = await supabase
+            .from('orders')
+            .select('created_at, total_amount')
+            .gte('created_at', yearStart)
+            .neq('status', 'cancelled')
+            .order('created_at', { ascending: true });
+
+        if (!data) return [];
+
+        const months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+        const grouped: Record<string, { date: string; revenue: number; orders: number }> = {};
+
+        // Initialize all months
+        months.forEach(m => {
+            grouped[m] = { date: m, revenue: 0, orders: 0 };
+        });
+
+        data.forEach(order => {
+            const date = new Date(order.created_at);
+            const monthName = months[date.getMonth()];
+            grouped[monthName].revenue += Number(order.total_amount);
+            grouped[monthName].orders += 1;
+        });
+
+        return Object.values(grouped);
     }
 };
