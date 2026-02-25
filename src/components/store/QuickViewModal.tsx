@@ -1,9 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Heart, ShoppingCart, Package } from "lucide-react";
 import { StoreProduct } from "@/services/storeApi";
-import { useCart } from "@/hooks/useCart";
+import { useCartStore } from "@/stores/cartStore";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useI18n } from "@/lib/i18n";
+import { cartBusiness } from "@/business/cartBusiness";
+import { toast } from "@/hooks/use-toast";
 
 interface QuickViewModalProps {
     product: StoreProduct | null;
@@ -13,7 +15,7 @@ interface QuickViewModalProps {
 
 export default function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps) {
     const { t } = useI18n();
-    const { addItem } = useCart();
+    const { addItem } = useCartStore();
     const { toggle, has } = useWishlist();
 
     const formatPrice = (price: number) =>
@@ -21,7 +23,17 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
 
     if (!product) return null;
 
-    const handleAddToCart = () => {
+    const handleAddToCart = async () => {
+        const validation = await cartBusiness.validateProductForCart(product.id);
+        if (!validation.valid) {
+            toast({
+                title: "Oups !",
+                description: validation.error || "Produit indisponible",
+                variant: "destructive",
+            });
+            return;
+        }
+
         addItem({
             id: product.id,
             name: product.name,
@@ -31,6 +43,12 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
             color: product.color,
             storage_capacity: product.storage_capacity,
         });
+
+        toast({
+            title: "Ajouté !",
+            description: `${product.name} est dans votre panier.`,
+        });
+
         onClose();
     };
 

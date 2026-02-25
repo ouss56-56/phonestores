@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Search, Heart, Menu, X, Smartphone, Globe } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { useCart } from "@/hooks/useCart";
+import { useCartStore } from "@/stores/cartStore";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useI18n } from "@/lib/i18n";
 import { storeApi, StoreProduct } from "@/services/storeApi";
@@ -21,7 +21,8 @@ export default function Navbar() {
   const searchRef = useRef<HTMLDivElement>(null);
   const searchTimeout = useRef<ReturnType<typeof setTimeout>>();
   const location = useLocation();
-  const { totalItems, setIsOpen } = useCart();
+  const { getTotalItems, setIsOpen } = useCartStore();
+  const totalItems = getTotalItems();
   const { count: wishlistCount } = useWishlist();
   const { t, locale, setLocale } = useI18n();
   const { isAdmin: isSystemAdmin } = useAuth();
@@ -80,14 +81,14 @@ export default function Navbar() {
         animate={{ y: hidden ? -100 : 0 }}
         transition={{ duration: 0.4, ease: [0.22, 0.9, 0.3, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? "py-2" : "py-4"
-          }`}
+          } `}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
             className={`flex items-center justify-between h-14 lg:h-16 px-6 rounded-full transition-all duration-500 ${scrolled
               ? "bg-white/80 backdrop-blur-xl shadow-[0_2px_20px_rgba(0,0,0,0.06)] border border-black/[0.04]"
               : "bg-transparent"
-              }`}
+              } `}
           >
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5 group">

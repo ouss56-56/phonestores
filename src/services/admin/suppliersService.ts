@@ -17,7 +17,7 @@ export const suppliersService = {
     async create(supplier: Partial<Supplier>) {
         const { data, error } = await supabase
             .from('suppliers')
-            .insert(supplier)
+            .insert(supplier as any)
             .select()
             .single();
 
@@ -55,13 +55,15 @@ export const suppliersService = {
     async createPO(po: { supplier_id: string; items: { product_id: string; quantity: number; unit_cost: number }[]; notes?: string }) {
         const totalAmount = po.items.reduce((sum, i) => sum + (i.unit_cost * i.quantity), 0);
 
+        const poNumber = `PO-${Date.now().toString().slice(-6)}`;
+
         const { data: order, error } = await supabase
             .from('purchase_orders')
             .insert({
                 supplier_id: po.supplier_id,
                 total_amount: totalAmount,
                 notes: po.notes || null,
-                po_number: '',
+                po_number: poNumber,
             })
             .select()
             .single();

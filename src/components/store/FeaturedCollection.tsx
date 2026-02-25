@@ -3,9 +3,11 @@ import { motion } from "framer-motion";
 import { Heart, Eye, Plus, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { storeApi, StoreProduct } from "@/services/storeApi";
-import { useCart } from "@/hooks/useCart";
+import { useCartStore } from "@/stores/cartStore";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useI18n } from "@/lib/i18n";
+import { cartBusiness } from "@/business/cartBusiness";
+import { toast } from "@/hooks/use-toast";
 import MagneticButton from "@/components/ui/MagneticButton";
 
 interface FeaturedCollectionProps {
@@ -102,7 +104,7 @@ const SAMPLE_PRODUCTS: StoreProduct[] = [
 
 export default function FeaturedCollection({ onQuickView }: FeaturedCollectionProps) {
     const { t } = useI18n();
-    const { addItem } = useCart();
+    const { addItem } = useCartStore(); // Changed from useCart
     const { toggle, has } = useWishlist();
 
     const { data: dbProducts = [], isLoading } = useQuery({
@@ -116,7 +118,17 @@ export default function FeaturedCollection({ onQuickView }: FeaturedCollectionPr
     const formatPrice = (price: number) =>
         new Intl.NumberFormat("fr-DZ").format(price) + " DA";
 
-    const handleAddToCart = (product: StoreProduct) => {
+    const handleAddToCart = async (product: StoreProduct) => { // Made async
+        const validation = await cartBusiness.validateProductForCart(product.id); // Added stock validation
+        if (!validation.valid) {
+            toast({
+                title: "Oups !",
+                description: validation.error || "Produit indisponible",
+                variant: "destructive",
+            });
+            return;
+        }
+
         addItem({
             id: product.id,
             name: product.name,
@@ -125,6 +137,11 @@ export default function FeaturedCollection({ onQuickView }: FeaturedCollectionPr
             image_url: product.image_url,
             color: product.color,
             storage_capacity: product.storage_capacity,
+        });
+
+        toast({ // Added success toast
+            title: "Ajouté !",
+            description: `${product.name} est dans votre panier.`,
         });
     };
 

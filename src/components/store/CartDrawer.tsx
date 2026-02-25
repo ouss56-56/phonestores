@@ -1,11 +1,13 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
-import { useCart } from "@/hooks/useCart";
+import { useCartStore } from "@/stores/cartStore";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "@/lib/i18n";
 
 export default function CartDrawer() {
-  const { items, removeItem, updateQuantity, totalItems, totalPrice, isOpen, setIsOpen, clearCart } = useCart();
+  const { items, removeItem, updateQuantity, getTotalItems, getTotalPrice, isOpen, setIsOpen, clearCart } = useCartStore();
+  const totalItems = getTotalItems();
+  const totalPrice = getTotalPrice();
   const navigate = useNavigate();
   const { t } = useI18n();
 

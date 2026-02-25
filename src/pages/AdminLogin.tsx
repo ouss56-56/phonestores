@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Smartphone, Lock, Mail, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Smartphone, Lock, Mail, Eye, EyeOff, ArrowRight, AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+
+import { loginFormSchema, validate } from "@/lib/validation";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
@@ -16,6 +19,15 @@ export default function AdminLogin() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setFieldErrors({});
+
+    // 1. Zod Validation
+    const validation = validate(loginFormSchema, { email, password });
+    if (!validation.success) {
+      setFieldErrors(validation.errors || {});
+      return;
+    }
+
     setLoading(true);
 
     const { error } = await signIn(email, password);
@@ -67,6 +79,11 @@ export default function AdminLogin() {
                   className="w-full pl-10 pr-4 py-3 rounded-xl bg-muted border border-border text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-primary/50 transition-colors"
                 />
               </div>
+              {fieldErrors.email && (
+                <p className="text-[10px] text-destructive flex items-center gap-1.5 font-grotesk font-medium pl-1">
+                  <AlertCircle className="w-3 h-3" /> {fieldErrors.email}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -91,6 +108,11 @@ export default function AdminLogin() {
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {fieldErrors.password && (
+                <p className="text-[10px] text-destructive flex items-center gap-1.5 font-grotesk font-medium pl-1">
+                  <AlertCircle className="w-3 h-3" /> {fieldErrors.password}
+                </p>
+              )}
             </div>
 
             {error && (

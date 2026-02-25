@@ -3,7 +3,7 @@ import { Heart, Eye, ShoppingCart, ArrowLeft, Trash2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { useWishlist } from "@/hooks/useWishlist";
-import { useCart } from "@/hooks/useCart";
+import { useCartStore } from "@/stores/cartStore";
 import { useI18n } from "@/lib/i18n";
 import { storeApi, StoreProduct } from "@/services/storeApi";
 import Navbar from "@/components/store/Navbar";
@@ -12,7 +12,7 @@ import Footer from "@/components/store/Footer";
 export default function WishlistPage() {
     const { t } = useI18n();
     const { items: wishlistIds, toggle, clear } = useWishlist();
-    const { addItem } = useCart();
+    const { addItem } = useCartStore();
 
     // Fetch all products and filter by wishlist IDs
     const { data: allProducts = [] } = useQuery({

@@ -1,69 +1,67 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, CreditCard, Truck, ShieldCheck } from "lucide-react";
-import { useCart } from "@/hooks/useCart";
-import { supabase } from "@/integrations/supabase/client";
+import { ArrowLeft, CreditCard, Truck, ShieldCheck, AlertCircle } from "lucide-react";
+import { useCartStore } from "@/stores/cartStore";
+import { orderBusiness } from "@/business/orderBusiness";
+import { cartBusiness } from "@/business/cartBusiness";
+import { checkoutFormSchema, validate } from "@/lib/validation";
 import { toast } from "@/hooks/use-toast";
 
 export default function Checkout() {
-  const { items, totalPrice, clearCart } = useCart();
+  const { items, getTotalPrice, clearCart } = useCartStore();
+  const totalPrice = getTotalPrice();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", email: "", notes: "" });
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const formatPrice = (price: number) => new Intl.NumberFormat("fr-DZ").format(price) + " DA";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (items.length === 0) return;
+
+    // 1. Validate form with Zod
+    const validation = validate(checkoutFormSchema, form);
+    if (!validation.success) {
+      setFieldErrors(validation.errors || {});
+      toast({
+        title: "Formulaire incomplet",
+        description: "Veuillez corriger les champs en erreur",
+        variant: "destructive",
+      });
+      return;
+    }
+    setFieldErrors({});
+
     setLoading(true);
-
     try {
-      // Create order
-      const { data: order, error: orderError } = await supabase
-        .from("orders")
-        .insert({
-          customer_name: form.name,
-          customer_phone: form.phone,
-          customer_email: form.email || null,
-          notes: form.notes || null,
-          total_amount: totalPrice,
-          order_number: "LBC-" + Date.now(),
-          status: "pending",
-          payment_method: "cash",
-        })
-        .select()
-        .single();
-
-      if (orderError) throw orderError;
-
-      // Create order items
-      const orderItems = items.map(item => ({
-        order_id: order.id,
-        product_id: item.id,
-        quantity: item.quantity,
-        unit_price: item.price,
-      }));
-
-      const { error: itemsError } = await supabase.from("order_items").insert(orderItems);
-      if (itemsError) throw itemsError;
-
-      // Update product quantities
-      for (const item of items) {
-        await supabase.rpc("has_role", { _user_id: "00000000-0000-0000-0000-000000000000", _role: "admin" });
-        // We'll update stock via admin later
+      // 2. Validate stock availability
+      const stockCheck = await cartBusiness.validateCartStock(items);
+      if (!stockCheck.valid) {
+        toast({
+          title: "Stock insuffisant",
+          description: stockCheck.errors.join("\n"),
+          variant: "destructive",
+        });
+        return;
       }
 
+      // 3. Place order via business layer
+      const result = await orderBusiness.placeOrder(items, validation.data!);
+
+      // 4. Clear cart and navigate to confirmation
       clearCart();
       toast({
         title: "✅ Commande Confirmée !",
-        description: `Numéro de commande: ${order.order_number}`,
+        description: `Numéro de commande: ${result.orderNumber}`,
       });
-      navigate("/");
+      navigate(`/order-confirmation/${result.orderNumber}`);
     } catch (err) {
       console.error(err);
-      toast({ title: "Erreur", description: "Impossible de passer la commande", variant: "destructive" });
+      const message = err instanceof Error ? err.message : "Impossible de passer la commande";
+      toast({ title: "Erreur", description: message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -111,9 +109,22 @@ export default function Checkout() {
                     type={type}
                     required={required}
                     value={form[key as keyof typeof form]}
-                    onChange={e => setForm(prev => ({ ...prev, [key]: e.target.value }))}
-                    className="w-full px-4 py-3 rounded-xl bg-muted border border-border text-sm outline-none focus:border-primary/50 transition-colors"
+                    onChange={e => {
+                      setForm(prev => ({ ...prev, [key]: e.target.value }));
+                      if (fieldErrors[key]) {
+                        setFieldErrors(prev => { const next = { ...prev }; delete next[key]; return next; });
+                      }
+                    }}
+                    className={`w-full px-4 py-3 rounded-xl bg-muted border text-sm outline-none transition-colors ${fieldErrors[key]
+                        ? "border-destructive focus:border-destructive"
+                        : "border-border focus:border-primary/50"
+                      }`}
                   />
+                  {fieldErrors[key] && (
+                    <p className="text-xs text-destructive flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" /> {fieldErrors[key]}
+                    </p>
+                  )}
                 </div>
               ))}
               <div className="space-y-1.5">

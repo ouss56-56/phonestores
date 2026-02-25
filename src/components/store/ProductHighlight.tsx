@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { ShoppingCart, Star } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { storeApi } from "@/services/storeApi";
-import { useCart } from "@/hooks/useCart";
+import { useCartStore } from "@/stores/cartStore";
 import { useI18n } from "@/lib/i18n";
 
 // Map color names to desaturated tints for background
@@ -46,7 +46,7 @@ function parseColors(colorStr: string | null | undefined): string[] {
 
 export default function ProductHighlight() {
     const { t } = useI18n();
-    const { addItem } = useCart();
+    const { addItem } = useCartStore();
 
     const { data: products = [] } = useQuery({
         queryKey: ['products', 'featured-highlight'],
@@ -162,8 +162,8 @@ export default function ProductHighlight() {
                                                 key={color}
                                                 onClick={() => setSelectedColor(color)}
                                                 className={`px-4 py-2 rounded-full text-xs font-medium border transition-all duration-300 ${isActive
-                                                        ? "border-black/20 bg-white shadow-sm"
-                                                        : "border-black/[0.06] bg-white/40 hover:bg-white/70"
+                                                    ? "border-black/20 bg-white shadow-sm"
+                                                    : "border-black/[0.06] bg-white/40 hover:bg-white/70"
                                                     }`}
                                                 style={{ color: colorTint.text }}
                                             >
